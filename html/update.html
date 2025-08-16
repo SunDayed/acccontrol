@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地区访问限制</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        .container {
+            width: 600px;
+            border: 2px solid #ccc;
+            margin: 10px auto;
+        }
+
+        .sidebar {
+            width: 150px;
+            height: 30px;
+            background-color: #e0e0e0;
+            padding: px;
+        }
+
+        .content {
+            display: flex;
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+            background-color: #ffffff;
+            margin: 5px;
+            border: 1px solid #ccc;
+        }
+
+        select {
+            width: 100%;
+            height: 200px;
+        }
+
+        button {
+            margin: 10px 0;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .buttons button {
+            margin: 5px;
+        }
+
+        .container-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .container-group .container {
+            width: 48%;
+        }
+
+        .box {
+            width: 40%;
+            flex: 1;
+        }
+
+        .containerx {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+            width: 200px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input[type="text_t"] {
+            margin-right: 10px;
+            padding: 5px;
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-group">
+        <div class="container">
+            <div class="sidebar">
+                <p>国内</p>
+            </div>
+            <div class="content">
+                <div class="column">
+                    <label for="disallowed">Disallowed Geolocations:</label>
+                    <select id="disallowed_state" multiple>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button onclick="moveToRight('disallowed_state', 'allowed_state')">&gt;&gt;</button>
+                    <button onclick="moveToLeft('allowed_state', 'disallowed_state')">&lt;&lt;</button>
+                </div>
+                <div class="column">
+                    <label for="allowed">Allowed Geolocations:</label>
+                    <select id="allowed_state" multiple>
+                        <option>Anhui</option>
+                        <option>Shanghai</option>
+                        <option>Beijing</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="getlocaldata('state','disallowed_state','allowed_state')">国内保存</button>
+        </div>
+
+        <!-- 黑白名单ip -->
+        <div class="container">
+            <a href="javascript:void(0)" onclick="update_ip_address(updateiplist_of_response)">立即刷新</a>
+            <div class="containerx">
+                <div class="box">
+                    <div class="sidebar">
+                        <p>黑名单ip</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="input_black_ipaddress" placeholder="ip">
+                        <button id="black_ip_add"
+                            onclick="addiplist('input_black_ipaddress','black_ip_list')">Add</button>
+                    </div>
+                    <div class="column">
+                        <label>list:</label>
+                        <select class="ip_list" id="black_ip_list" multiple>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="update_ip_list('blacklist_ipaddr','black_ip_list')">保存</button>
+                    <button class="btn" onclick="deleiplist('blacklist_ipaddr','black_ip_list')">删除</button>
+                </div>
+
+                <div class="box">
+                    <div class="sidebar">
+                        <p>白名单ip</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="input_white_ipaddress" placeholder="ip">
+                        <button id="white_ip_add"
+                            onclick="addiplist('input_white_ipaddress','white_ip_list')">Add</button>
+                    </div>
+                    <div class="column">
+                        <label>list:</label>
+                        <select class="ip_list" id="white_ip_list" multiple>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="update_ip_list('whitelist_ipaddr','white_ip_list')">保存</button>
+                    <button class="btn" onclick="deleiplist('whitelist_ipaddr','white_ip_list')">删除</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- 上一 -->
+
+
+    <!-- 下二 -->
+    <div class="container-group">
+        <div class="container">
+            <div class="sidebar">
+                <p>境外</p>
+            </div>
+            <div class="content">
+                <div class="column">
+                    <label for="disallowed_geo">Disallowed Geolocations:</label>
+                    <select id="disallowed_geo" multiple>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button onclick="moveToRight('disallowed_geo', 'allowed_geo')">&gt;&gt;</button>
+                    <button onclick="moveToLeft('allowed_geo', 'disallowed_geo')">&lt;&lt;</button>
+                </div>
+                <div class="column">
+                    <label for="allowed_geo">Allowed Geolocations:</label>
+                    <select id="allowed_geo" multiple>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="getlocaldata('geo','disallowed_geo','allowed_geo')">境外保存</button>
+        </div>
+
+        <div class="container">
+            <div class="sidebar">
+                <p>大陆</p>
+            </div>
+            <div class="content">
+                <div class="column">
+                    <label for="disallowed_cont">Disallowed Geolocations:</label>
+                    <select id="disallowed_cont" multiple>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button onclick="moveToRight('disallowed_cont', 'allowed_cont')">&gt;&gt;</button>
+                    <button onclick="moveToLeft('allowed_cont', 'disallowed_cont')">&lt;&lt;</button>
+                </div>
+                <div class="column">
+                    <label for="allowed_cont">Allowed Geolocations:</label>
+                    <select id="allowed_cont" multiple>
+                        <option>AS</option>
+                        <option>AN</option>
+                        <option>OC</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="getlocaldata('continent','disallowed_cont','allowed_cont')">大陆保存</button>
+        </div>
+    </div>
+    <div class="container-group">
+        <!-- 规则库、限流策略 -->
+        <div class="container">
+            <a href="javascript:void(0)" onclick="update_ip_address(updateiplist_of_response)">立即刷新</a>
+            <div class="containerx">
+                <div class="box">
+                    <div class="sidebar">
+                        <p>规则库</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="input_black_ipaddress" placeholder="ip">
+                        <button id="black_ip_add"
+                            onclick="addiplist('input_black_ipaddress','black_ip_list')">Add</button>
+                    </div>
+                    <div class="column">
+                        <label>list:</label>
+                        <select class="ip_list" id="black_ip_list" multiple>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="update_ip_list('blacklist_ipaddr','black_ip_list')">保存</button>
+                    <button class="btn" onclick="deleiplist('blacklist_ipaddr','black_ip_list')">删除</button>
+                </div>
+
+                <div class="box">
+                    <div class="sidebar">
+                        <p>限流策略</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="radio-item">
+                            <input type="radio" name="mainOption" value="1" />
+                            开启
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="mainOption" value="0" checked />
+                            关闭
+                        </label>
+                    </div>
+                    <div id="subRadioGroup" class="form-group hidden">
+                        <strong>规则</strong><br />
+                        <label class="radio-item">
+                            <input type="radio" name="subOption" value="0" checked />
+                            永久限制
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="subOption" value="1" />
+                            指定时间
+                        </label>
+                    </div>
+                    <div id="PolicyGroup" class="form-group hidden">
+                        <strong>限制指定时间</strong><br />
+                        周期：<input type="text_t" name="range_t" />秒<br />
+                        次数：<input type="text_t" name="count_t" />次<br />
+                        封禁：<input type="text_t" name="ban_t" />秒
+                    </div>
+                    <div class="form-group">
+                        <button class="btn" onclick="updatescanerbtn()">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //初始化区域封禁内容
+        querryofallmsg(updatelocal_of_response)
+        //初始化黑白名单ip列表
+        update_ip_address(updateiplist_of_response);
+
+
+        //防扫描页面展示
+        const mainOptions = document.querySelectorAll('input[name="mainOption"]');
+        const subRadioGroup = document.getElementById('subRadioGroup');
+        const subOptions = document.querySelectorAll('input[name="subOption"]');
+        const PolicyGroup = document.getElementById('PolicyGroup');
+
+        mainOptions.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === '1') {
+                    subRadioGroup.classList.remove('hidden');
+                } else {
+                    subRadioGroup.classList.add('hidden');
+                    PolicyGroup.classList.add('hidden');
+                }
+            });
+        });
+
+        subOptions.forEach(sub => {
+            sub.addEventListener('change', function () {
+                if (this.value === '1') {
+                    PolicyGroup.classList.remove('hidden');
+                    const range_t = PolicyGroup.querySelector('input[name="range_t"]');
+                    const count_t = PolicyGroup.querySelector('input[name="count_t"]');
+                    const ban_t = PolicyGroup.querySelector('input[name="ban_t"]');
+                    if (range_t) range_t.value = '60';
+                    if (count_t) count_t.value = '120';
+                    if (ban_t) ban_t.value = '3600';
+
+                } else {
+                    PolicyGroup.classList.add('hidden');
+                    document.querySelectorAll('input[name="range_t"],input[name="count_t"], input[name="ban_t"]').forEach(t => t.value = '');
+                }
+            });
+        });
+        function updatescanerbtn() {
+            const mainSelected = document.querySelector('input[name="mainOption"]:checked');
+            const subSelected = document.querySelector('input[name="subOption"]:checked');
+            const range_t = document.querySelector('input[name="range_t"]').value;
+            const count_t = document.querySelector('input[name="count_t"]').value;
+            const ban_t = document.querySelector('input[name="ban_t"]').value;
+
+            const result = {
+                maintype: mainSelected.value,
+                childtype: subSelected.value,
+                range_t: range_t? range_t:null,
+                count_t: count_t? count_t:null,
+                ban_t: ban_t? ban_t:null,
+            };
+
+            sendPostRequest("/test",result)
+        }
+
+        //区域封禁右移
+        function moveToRight(fromSelectId, toSelectId) {
+            const fromSelect = document.getElementById(fromSelectId);
+            const toSelect = document.getElementById(toSelectId);
+            for (let i = fromSelect.options.length - 1; i >= 0; i--) {
+                if (fromSelect.options[i].selected) {
+                    toSelect.appendChild(fromSelect.options[i]);
+                }
+            }
+        }
+        //区域封禁左移
+        function moveToLeft(fromSelectId, toSelectId) {
+            const fromSelect = document.getElementById(fromSelectId);
+            const toSelect = document.getElementById(toSelectId);
+            for (let i = fromSelect.options.length - 1; i >= 0; i--) {
+                if (fromSelect.options[i].selected) {
+                    toSelect.appendChild(fromSelect.options[i]);
+                }
+            }
+        }
+
+
+        function querryofallmsg(updatelocal_of_response) {
+            var url = "/getaccesscontrol";
+            var type = "json";
+            $.ajax({
+                url: url,
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true,
+                },
+                dataType: type,
+                success: function (data) {
+                    updatelocal_of_response(data);
+                },
+                error: function (jqXHR, textstatus, errorthrown) {
+                    if (window.console) console.log("intreface err");
+                }
+            });
+        }
+        function updatelocal_of_response(data) {
+            if (!data) {
+                console.error("No data received!");
+                return;
+            }
+            //清空、更新select
+            const updateSelect = (selectId, items) => {
+                const select = document.getElementById(selectId);
+                if (!select) {
+                    console.error(`Element with ID "${selectId}" not found!`);
+                    return;
+                }
+                if (items.length == undefined) { return; }
+                select.innerHTML = "";
+                items.forEach(item => {
+                    if (item != null && item !== undefined) {
+                        select.appendChild(new Option(String(item), String(item)));
+                    }
+                });
+            };
+            //更新
+            updateSelect("disallowed_state", data.state?.disallow);
+            updateSelect("allowed_state", data.state?.allow);
+            updateSelect("disallowed_geo", data.geo?.disallow);
+            updateSelect("allowed_geo", data.geo?.allow);
+            updateSelect("disallowed_cont", data.continent?.disallow);
+            updateSelect("allowed_cont", data.continent?.allow);
+
+        }
+        function update_ip_address(updateiplist_of_response) {
+            var url = "/getiplist";
+            var type = "json";
+            $.ajax({
+                url: url,
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true,
+                },
+                dataType: type,
+                success: function (data) {
+                    updateiplist_of_response(data);
+                },
+                error: function (jqXHR, textstatus, errorthrown) {
+                    if (window.console) console.log("intreface err");
+                }
+            });
+        }
+        function updateiplist_of_response(data) {
+            if (!data) {
+                console.error("No data received!");
+                return;
+            }
+            //清空、更新select
+            const updateSelectipaddr = (selectId, items) => {
+                const select = document.getElementById(selectId);
+                if (!select) {
+                    console.error(`Element with ID "${selectId}" not found!`);
+                    return;
+                }
+                if (items.length == undefined) { return; }
+                select.innerHTML = "";
+                items.forEach(item => {
+                    if (item != null && item !== undefined) {
+                        select.appendChild(new Option(String(item), String(item)));
+                    }
+                });
+            };
+            //更新
+            updateSelectipaddr("white_ip_list", data.whitelist_ipaddr);
+            updateSelectipaddr("black_ip_list", data.blacklist_ipaddr);
+        }
+
+
+
+
+        //下发更新内容
+        //更新区域封禁信息
+        function getlocaldata(name, disallowid, allowid) {
+            console.log(name)
+            const disallow = document.getElementById(disallowid);
+            const allow = document.getElementById(allowid);
+
+            const disallowvalues = Array.from(disallow.options).map(option => option.value);
+            const allowvalues = Array.from(allow.options).map(option => option.value);
+            const jsonData = {
+                [name]: {
+                    disallow: disallowvalues,
+                    allow: allowvalues
+                }
+            };
+            sendPostRequest("/updateaccesscontrol", jsonData);
+        }
+        //保存按钮
+        function update_ip_list(name, ip_select_id) {
+            console.log(name)
+            const ipselectid = document.getElementById(ip_select_id);
+
+
+            const ipselects = Array.from(ipselectid.options).map(option => option.value);
+            const jsonData = {
+                [name]: ipselects
+            };
+            sendPostRequest("/updateiplist", jsonData);
+        }
+
+        //添加按钮
+        function addiplist(from_id, to_id) {
+            const fromSelect = document.getElementById(from_id);
+            const content = fromSelect.value;
+            if (content == "") {
+                alert("空值不能添加")
+                return;
+            }
+            const toSelect = document.getElementById(to_id);
+
+            const items = content.split(',');
+            for (let i = 0; i < items.length; i++) {
+
+                const option = document.createElement("option");
+                option.textContent = items[i].trim();
+                toSelect.appendChild(option);
+            }
+            fromSelect.value = "";
+        }
+
+        //删除按钮
+        function deleiplist(name, to_dele_id) {
+            console.log(name)
+            const ipdeleteid = document.getElementById(to_dele_id);
+            const ipdeletes = Array.from(ipdeleteid.selectedOptions).map(option => option.value);
+            const jsonData = {
+                [name]: ipdeletes
+            };
+            sendPostRequest("/ipdel", jsonData);
+            for (let i = ipdeleteid.selectedOptions.length - 1; i >= 0; i--) {
+                ipdeleteid.remove(ipdeleteid.selectedOptions[i].index);
+            }
+
+        }
+
+        //发送post请求
+        function sendPostRequest(url, data) {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('请求成功:', data);
+                    alert("更新成功")
+                })
+                .catch(error => {
+                    console.error('请求失败:', error);
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>

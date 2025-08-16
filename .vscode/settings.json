@@ -1,0 +1,9 @@
+{
+    "Lua.diagnostics.disable": [
+        "need-check-nil"
+    ],
+    "liveServer.settings.port": 5528,
+    "Lua.diagnostics.globals": [
+        "ngx"
+    ]
+}

