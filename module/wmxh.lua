@@ -118,15 +118,16 @@ end
 --http请求获取数据
 function _M.http_get_data(ipadd)
     local client = http.new()
-    
+
     local res, err = client:request_uri("http://47.108.83.76:8011/iplookup?ip=" .. ipadd, { method = "GET" })
     if res then
         return res.body
     else
-        return "Error: "..err
+        return "Error: " .. err
     end
 end
 
+--加载配置文件到缓存
 function _M.resolve_config_file_to_cache(filePath)
     local config = {}
     local file = io.open(filePath, "r")
@@ -136,7 +137,7 @@ function _M.resolve_config_file_to_cache(filePath)
     end
     for line in file:lines() do
         line = line:match("^%s*(.-)%s*$")
-        if line ~= "" and not line:match("^#") then--空行
+        if line ~= "" and not line:match("^#") then --空行
             local key, value = line:match("^(%S+)%s+(%S+)$")
             if key and value then
                 if tonumber(value) then
@@ -165,5 +166,51 @@ function _M.uri_encode(str)
     return result
 end
 
+--修改文件指定行
+function _M.UpdateLocalConfigFile(orgin_name, value)
+    local config_filepath = "/usr/local/acccontrol/luafiles/access_config"
+    local lines = {}
+    for line in io.lines(config_filepath) do
+        table.insert(lines, line)
+    end
+    for i, line in ipairs(lines) do
+        if line:match("^" .. orgin_name .. "%s+%-?%d+") then
+            lines[i] = orgin_name .. " " .. tostring(value)
+        end
+    end
+    local file = io.open(config_filepath, "w")
+    if file then
+        for _, line in ipairs(lines) do
+            file:write(line .. "\n")
+        end
+        file:close()
+        ngx.log(ngx.ERR, "更新成功")
+    else
+        ngx.log(ngx.ERR, "更新失败")
+    end
+end
+
+--弹出文件内的配置信息，return一个table
+function _M.getdatafromfileofkey()
+    local config_filepath = "/usr/local/acccontrol/luafiles/access_config"
+    local config = {}
+
+    -- 3. 逐行读取文件内容
+    for line in io.open(config_filepath,"r"):lines() do
+        line = line:gsub("^%s*(.-)%s*$", "%1")
+        if line ~= "" then
+            local key, value = line:match("^([^%s]+)%s+(.+)$")
+            if key and value then
+                local num_value = tonumber(value)
+                if num_value then
+                    config[key] = num_value
+                else
+                    config[key] = value
+                end
+            end
+        end
+    end
+    return config
+end
 
 return _M -- 返回模块

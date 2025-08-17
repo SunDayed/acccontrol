@@ -7,34 +7,51 @@ local dictwhite = ngx.shared.access_whitelist
 local access_config = ngx.shared.access_config
 local access_signature = ngx.shared.access_signature
 
-local blackallip = dictblack:get_keys()
-for _,item in ipairs(blackallip) do
-    ngx.say(item)
-end
-ngx.say("-------------")
--- wmxh.UpdateLocalConfigFile("maintype", 0)
--- wmxh.UpdateLocalConfigFile("childtype", 1)
--- wmxh.UpdateLocalConfigFile("limit_time", 60)
--- wmxh.UpdateLocalConfigFile("limit_number", 1220)
--- wmxh.UpdateLocalConfigFile("ban_t", 3610)
 
-local allkeys = access_config:get_keys()
-for _,item in ipairs(allkeys) do
-    ngx.say(item.."   "..access_config:get(item))
-end
+--加载限流策略配置信息
+local outdata = wmxh.getdatafromfileofkey()
+ngx.say(cjson.encode(outdata))
 
-ngx.say("文件内容")
-local filepath = io.open("/usr/local/acccontrol/luafiles/access_config","r")
-local lines = {}
-for line in filepath:lines() do
-    if line ~= "" then
-        table.insert(lines,line)
-    end
-end
+local maintype = outdata.maintype
+local childtype = outdata.childtype
+local limit_time = outdata.limit_time
+local limit_number = outdata.limit_number
+local ban_t = outdata.ban_t
 
-for _,line in ipairs(lines) do
-    ngx.say(line)
-end
+
+
+
+
+
+
+-- local blackallip = dictblack:get_keys()
+-- for _,item in ipairs(blackallip) do
+--     ngx.say(item)
+-- end
+-- ngx.say("-------------")
+-- -- wmxh.UpdateLocalConfigFile("maintype", 0)
+-- -- wmxh.UpdateLocalConfigFile("childtype", 1)
+-- -- wmxh.UpdateLocalConfigFile("limit_time", 60)
+-- -- wmxh.UpdateLocalConfigFile("limit_number", 1220)
+-- -- wmxh.UpdateLocalConfigFile("ban_t", 3610)
+
+-- local allkeys = access_config:get_keys()
+-- for _,item in ipairs(allkeys) do
+--     ngx.say(item.."   "..access_config:get(item))
+-- end
+
+-- ngx.say("文件内容")
+-- local filepath = io.open("/usr/local/acccontrol/luafiles/access_config","r")
+-- local lines = {}
+-- for line in filepath:lines() do
+--     if line ~= "" then
+--         table.insert(lines,line)
+--     end
+-- end
+
+-- for _,line in ipairs(lines) do
+--     ngx.say(line)
+-- end
 
 
 
