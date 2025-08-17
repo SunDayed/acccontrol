@@ -17,18 +17,16 @@ local access_signature = ngx.shared.access_signature
 --前置请求信息
 local method = ngx.var.request_method
 
-
-
 -- --限流模式
 --     1:黑名单，超出
 --     2:指定时间
 --     3:限制新建连接
 --限流规则
-local limit_number = access_config:get("limit_number")
-local limit_time = access_config:get("limit_time")
-local maintype = access_config:get("maintype")
-local childtype = access_config:get("childtype")
-local ban_t = access_config:get("ban_t")
+local limit_number = tonumber(access_config:get("limit_number"))
+local limit_time = tonumber(access_config:get("limit_time"))
+local maintype = tonumber(access_config:get("maintype"))
+local childtype = tonumber(access_config:get("childtype"))
+local ban_t = tonumber(access_config:get("ban_t"))
 
 --主函数开始--
 local source_ipaddr = "83.22.12.14"
@@ -41,7 +39,7 @@ end
 
 --2黑名单永久封禁匹配
 if dictblack:get(source_ipaddr) then
-    dictblack:set(source_ipaddr, true)
+    --  dictblack:set(source_ipaddr, true)
     ngx.status = 468
     wmxh.blockpage("black ip" .. source_ipaddr)
     return
@@ -66,7 +64,7 @@ if maintype then
             wmxh.blockpage(limit_time ..
                 " seconds and " .. limit_number .. " times, ban " .. ban_t .. "s !! " .. source_ipaddr)
             return
-        elseif childtype == 2 then
+        elseif childtype == 0 then
             --永久限制
             if blacklist_ipaddr_list then
                 blacklist_ipaddr_list:write(source_ipaddr .. "\n")
@@ -80,8 +78,8 @@ if maintype then
             wmxh.blockpage(limit_time .. " seconds and " .. limit_number .. " times, permanent ban!!" .. source_ipaddr)
             return
         elseif childtype == 3 then
-            ngx.status = 468
-            wmxh.blockpage(source_ipaddr .. " Exceeding the set threshold, reject the new connection and retry later.")
+            -- ngx.status = 468
+            -- wmxh.blockpage(source_ipaddr .. " Exceeding the set threshold, reject the new connection and retry later.")
             return
         end
     else
@@ -94,8 +92,7 @@ if maintype then
         end
     end
 end
-
---限流策略结束，触发后自动添加到黑名单中--
+--限流策略结束--
 
 --区域封禁开始--
 --获取redis连接

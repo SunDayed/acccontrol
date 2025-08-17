@@ -1,10 +1,8 @@
 limit_type 1
-limit_number 120
-limit_time 60
-ban_t 0
 
-maintype 0
+maintype 1
 childtype 0
 
-
-
+limit_time 60
+limit_number 120
+ban_t 4
