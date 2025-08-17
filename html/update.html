@@ -273,9 +273,14 @@
                     </div>
                     <div id="PolicyGroup" class="form-group hidden">
                         <strong>限制指定时间</strong><br />
-                        周期：<input type="text_t" name="range_t" />秒<br />
-                        次数：<input type="text_t" name="count_t" />次<br />
-                        封禁：<input type="text_t" name="ban_t" />秒
+                        周期：<input type="text_t" name="range_t" value="60" />秒<br />
+                        次数：<input type="text_t" name="count_t" value="120" />次<br />
+                        封禁：<input type="text_t" name="ban_t" value="3600" />秒
+                    </div>
+                    <div id="PolicyGroup1" class="form-group hidden">
+                        <strong>永久限制</strong><br />
+                        周期：<input type="text_t" name="range_t1" value="60" />秒<br />
+                        次数：<input type="text_t" name="count_t1" value="120" />次<br />
                     </div>
                     <div class="form-group">
                         <button class="btn" onclick="updatescanerbtn()">保存</button>
@@ -286,61 +291,125 @@
     </div>
     <script>
         //初始化区域封禁内容
-        querryofallmsg(updatelocal_of_response)
+        querryofallmsg(updatelocal_of_response);
         //初始化黑白名单ip列表
         update_ip_address(updateiplist_of_response);
+        //初始化限流策略
+        querryofscanermsg()
 
+
+        function querryofscanermsg(updatescaner_of_response) {
+            var url = "/getscanerconf";
+            var type = "json";
+            $.ajax({
+                url: url,
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true,
+                },
+                dataType: type,
+                success: function (data) {
+                    updatescaner_of_response(data);
+                },
+                error: function (jqXHR, textstatus, errorthrown) {
+                    if (window.console) console.log("intreface err");
+                }
+            });
+        }
+        function updatescaner_of_response(data){
+            if (!data) {
+                console.error("No data received!");
+                return;
+            }
+            
+        }
 
         //防扫描页面展示
         const mainOptions = document.querySelectorAll('input[name="mainOption"]');
         const subRadioGroup = document.getElementById('subRadioGroup');
         const subOptions = document.querySelectorAll('input[name="subOption"]');
         const PolicyGroup = document.getElementById('PolicyGroup');
+        const PolicyGroup1 = document.getElementById('PolicyGroup1');
 
         mainOptions.forEach(radio => {
             radio.addEventListener('change', function () {
                 if (this.value === '1') {
                     subRadioGroup.classList.remove('hidden');
+                    PolicyGroup1.classList.remove('hidden');
+                    PolicyGroup.classList.add('hidden');
+                    const range_t = PolicyGroup1.querySelector('input[name="range_t1"]');
+                    const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
+                    if (range_t) range_t.value = '60';
+                    if (count_t) count_t.value = '120';
+                    document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
                 } else {
                     subRadioGroup.classList.add('hidden');
                     PolicyGroup.classList.add('hidden');
+                    PolicyGroup1.classList.add('hidden');
                 }
             });
         });
 
         subOptions.forEach(sub => {
+
             sub.addEventListener('change', function () {
                 if (this.value === '1') {
                     PolicyGroup.classList.remove('hidden');
+                    PolicyGroup1.classList.add('hidden');
                     const range_t = PolicyGroup.querySelector('input[name="range_t"]');
                     const count_t = PolicyGroup.querySelector('input[name="count_t"]');
                     const ban_t = PolicyGroup.querySelector('input[name="ban_t"]');
                     if (range_t) range_t.value = '60';
                     if (count_t) count_t.value = '120';
                     if (ban_t) ban_t.value = '3600';
+                } else if (this.value === '0') {
+                    PolicyGroup1.classList.remove('hidden');
+                    PolicyGroup.classList.add('hidden');
+                    const range_t = PolicyGroup1.querySelector('input[name="range_t1"]');
+                    const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
 
+                    if (range_t) range_t.value = '60';
+                    if (count_t) count_t.value = '120';
+                    document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
                 } else {
                     PolicyGroup.classList.add('hidden');
-                    document.querySelectorAll('input[name="range_t"],input[name="count_t"], input[name="ban_t"]').forEach(t => t.value = '');
+                    PolicyGroup1.classList.remove('hidden');
+                    //document.querySelectorAll('input[name="range_t"],input[name="count_t"], input[name="ban_t"]').forEach(t => t.value = '');
                 }
             });
+
         });
         function updatescanerbtn() {
             const mainSelected = document.querySelector('input[name="mainOption"]:checked');
             const subSelected = document.querySelector('input[name="subOption"]:checked');
-            const range_t = document.querySelector('input[name="range_t"]').value;
-            const count_t = document.querySelector('input[name="count_t"]').value;
-            const ban_t = document.querySelector('input[name="ban_t"]').value;
+            if (subSelected.value == '1') {
+                //指定时间
+                const range_t = document.querySelector('input[name="range_t"]').value;
+                const count_t = document.querySelector('input[name="count_t"]').value;
+                const ban_t = document.querySelector('input[name="ban_t"]').value;
 
-            const result = {
-                maintype: mainSelected.value,
-                childtype: subSelected.value,
-                range_t: range_t? range_t:null,
-                count_t: count_t? count_t:null,
-                ban_t: ban_t? ban_t:null,
-            };
-
-            sendPostRequest("/test",result)
+                const result = {
+                    maintype: mainSelected.value,
+                    childtype: subSelected.value,
+                    range_t: range_t ? range_t : "-1",
+                    count_t: count_t ? count_t : "-1",
+                    ban_t: ban_t ? ban_t : "-1",
+                };
+                sendPostRequest("/updatescanerconf", result)
+            }
+            if (subSelected.value == '0') {
+                const range_t = document.querySelector('input[name="range_t1"]').value;
+                const count_t = document.querySelector('input[name="count_t1"]').value;
+                const ban_t = '';
+                const result = {
+                    maintype: mainSelected.value,
+                    childtype: subSelected.value,
+                    range_t: range_t ? range_t : "-1",
+                    count_t: count_t ? count_t : "-1",
+                    ban_t: ban_t ? ban_t : "-1",
+                };
+                sendPostRequest("/updatescanerconf", result)
+            }
         }
 
         //区域封禁右移
