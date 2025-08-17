@@ -298,7 +298,7 @@
         querryofscanermsg()
 
 
-        function querryofscanermsg(updatescaner_of_response) {
+        function querryofscanermsg() {
             var url = "/getscanerconf";
             var type = "json";
             $.ajax({
@@ -316,12 +316,59 @@
                 }
             });
         }
-        function updatescaner_of_response(data){
+        function updatescaner_of_response(data) {
             if (!data) {
                 console.error("No data received!");
                 return;
             }
-            
+            console.log(data)
+            const mainOptions = document.querySelectorAll('input[name="mainOption"]');
+            const subOptions = document.querySelectorAll('input[name="subOption"]');
+            const rangeTInput = document.querySelector('input[name="range_t"]');
+            const countTInput = document.querySelector('input[name="count_t"]');
+            const banTInput = document.querySelector('input[name="ban_t"]');
+
+            const rangeT1Input = document.querySelector('input[name="range_t1"]');
+            const countT1Input = document.querySelector('input[name="count_t1"]');
+
+            //main选项
+            mainOptions.forEach(option => {
+                if (option.value == data.maintype) {
+                    option.checked = true;
+                }
+            });
+
+            if (data.maintype == '1') {
+                //限流开启
+                document.getElementById('subRadioGroup').classList.remove('hidden');
+                if (data.childtype == '0') {
+                    //永久限制
+                    document.getElementById('PolicyGroup1').classList.remove('hidden');
+                    subOptions.forEach(option => {
+                        if (option.value == data.childtype) {
+                            option.checked = true;
+                        }
+                    });
+                    if (rangeT1Input && countT1Input) {
+                        rangeT1Input.value = data.limit_time;
+                        countT1Input.value = data.limit_number;
+                    }
+                } else {
+                    //指定时间
+                    document.getElementById('PolicyGroup').classList.remove('hidden');
+                    subOptions.forEach(option => {
+                        if (option.value == data.childtype) {
+                            option.checked = true;
+                        }
+                    });
+                    if (rangeTInput && countTInput) {
+                        rangeTInput.value = data.limit_time;
+                        countTInput.value = data.limit_number;
+                        banTInput.value = data.ban_t;
+                    }
+                }
+            }
+
         }
 
         //防扫描页面展示

@@ -29,17 +29,15 @@ local limit_time = result.range_t
 local limit_number = result.count_t
 local ban_t = result.ban_t
 
-ngx.say("maintype" .. maintype)
-ngx.say("childtype" .. childtype)
-ngx.say("limit_time" .. limit_time)
-ngx.say("limit_number" .. limit_number)
-ngx.say("ban_t" .. ban_t)
+-- ngx.say("maintype" .. maintype)
+-- ngx.say("childtype" .. childtype)
+-- ngx.say("limit_time" .. limit_time)
+-- ngx.say("limit_number" .. limit_number)
+-- ngx.say("ban_t" .. ban_t)
 
 if maintype == "1" then
-    ngx.say("maintype = 1 ")
     --开启
     if childtype == "1" then
-        ngx.say("child type = 1 ")
         --指定时间
         access_config:set("maintype", 1)
         access_config:set("childtype", childtype)

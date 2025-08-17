@@ -5,4 +5,4 @@ childtype 0
 
 limit_time 60
 limit_number 120
-ban_t 4
+ban_t 3600
