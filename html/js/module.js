@@ -94,8 +94,8 @@ mainOptions.forEach(radio => {
             PolicyGroup.classList.add('hidden');
             const range_t = PolicyGroup1.querySelector('input[name="range_t1"]');
             const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
-            if (range_t) range_t.value = '60';
-            if (count_t) count_t.value = '120';
+            // if (range_t) range_t.value = '60';
+            // if (count_t) count_t.value = '120';
             document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
         } else {
             subRadioGroup.classList.add('hidden');
@@ -114,17 +114,17 @@ subOptions.forEach(sub => {
             const range_t = PolicyGroup.querySelector('input[name="range_t"]');
             const count_t = PolicyGroup.querySelector('input[name="count_t"]');
             const ban_t = PolicyGroup.querySelector('input[name="ban_t"]');
-            if (range_t) range_t.value = '60';
-            if (count_t) count_t.value = '120';
-            if (ban_t) ban_t.value = '3600';
+            // if (range_t) range_t.value = '60';
+            // if (count_t) count_t.value = '120';
+            // if (ban_t) ban_t.value = '3600';
         } else if (this.value === '0') {
             PolicyGroup1.classList.remove('hidden');
             PolicyGroup.classList.add('hidden');
             const range_t = PolicyGroup1.querySelector('input[name="range_t1"]');
             const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
 
-            if (range_t) range_t.value = '60';
-            if (count_t) count_t.value = '120';
+            // if (range_t) range_t.value = '60';
+            // if (count_t) count_t.value = '120';
             document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
         } else {
             PolicyGroup.classList.add('hidden');
