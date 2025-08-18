@@ -3,6 +3,6 @@ limit_type 1
 maintype 1
 childtype 0
 
-limit_time 60
-limit_number 120
+limit_time 601
+limit_number 1201
 ban_t 3600
