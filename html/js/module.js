@@ -4,8 +4,53 @@ querryofallmsg(updatelocal_of_response);
 update_ip_address(updateiplist_of_response);
 //初始化限流策略
 querryofscanermsg()
+//初始化请求方法
+querryofmethmod("/getmethodlist", querryofmethmod_callback)
 
+function querryofmethmod(url, callbackfunc) {
+    var type = "json";
+    $.ajax({
+        url: url,
+        crossDomain: true,
+        xhrFields: {
+            withCredentials: true,
+        },
+        dataType: type,
+        success: function (data) {
+            callbackfunc(data);
+        },
+        error: function (jqXHR, textstatus, errorthrown) {
+            if (window.console) console.log("intreface err");
+        }
+    });
+}
 
+function querryofmethmod_callback(data) {
+    console.log(data)
+    if (!data) {
+        console.error("No data received!");
+        return;
+    }
+    
+    //清空、更新select
+    const updateSelectipaddr = (selectId, items) => {
+        // console.log("请求方法更新开始")
+        const select = document.getElementById(selectId);
+        if (!select) {
+            console.error(`Element with ID "${selectId}" not found!`);
+            return;
+        }
+        if (items.length == undefined) { return; }
+        select.innerHTML = "";
+        items.forEach(item => {
+            if (item != null && item !== undefined) {
+                select.appendChild(new Option(String(item), String(item)));
+            }
+        });
+    };
+    //更新
+    updateSelectipaddr("method_list", data.methmodlist);
+}
 function querryofscanermsg() {
     var url = "/getscanerconf";
     var type = "json";
@@ -29,7 +74,7 @@ function updatescaner_of_response(data) {
         console.error("No data received!");
         return;
     }
-    console.log(data)
+    //console.log(data)
     const mainOptions = document.querySelectorAll('input[name="mainOption"]');
     const subOptions = document.querySelectorAll('input[name="subOption"]');
     const rangeTInput = document.querySelector('input[name="range_t"]');
@@ -96,7 +141,7 @@ mainOptions.forEach(radio => {
             const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
             // if (range_t) range_t.value = '60';
             // if (count_t) count_t.value = '120';
-            document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
+            //document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
         } else {
             subRadioGroup.classList.add('hidden');
             PolicyGroup.classList.add('hidden');
@@ -109,27 +154,14 @@ subOptions.forEach(sub => {
 
     sub.addEventListener('change', function () {
         if (this.value === '1') {
-            PolicyGroup.classList.remove('hidden');
+            PolicyGroup.classList.remove('hidden');//
             PolicyGroup1.classList.add('hidden');
-            const range_t = PolicyGroup.querySelector('input[name="range_t"]');
-            const count_t = PolicyGroup.querySelector('input[name="count_t"]');
-            const ban_t = PolicyGroup.querySelector('input[name="ban_t"]');
-            // if (range_t) range_t.value = '60';
-            // if (count_t) count_t.value = '120';
-            // if (ban_t) ban_t.value = '3600';
         } else if (this.value === '0') {
             PolicyGroup1.classList.remove('hidden');
             PolicyGroup.classList.add('hidden');
-            const range_t = PolicyGroup1.querySelector('input[name="range_t1"]');
-            const count_t = PolicyGroup1.querySelector('input[name="count_t1"]');
-
-            // if (range_t) range_t.value = '60';
-            // if (count_t) count_t.value = '120';
-            document.querySelectorAll('input[name="ban_t"]').forEach(t => t.value = '');
         } else {
             PolicyGroup.classList.add('hidden');
             PolicyGroup1.classList.remove('hidden');
-            //document.querySelectorAll('input[name="range_t"],input[name="count_t"], input[name="ban_t"]').forEach(t => t.value = '');
         }
     });
 
@@ -259,6 +291,7 @@ function updateiplist_of_response(data) {
         console.error("No data received!");
         return;
     }
+
     //清空、更新select
     const updateSelectipaddr = (selectId, items) => {
         const select = document.getElementById(selectId);
@@ -274,7 +307,7 @@ function updateiplist_of_response(data) {
             }
         });
     };
-    //更新
+        //更新
     updateSelectipaddr("white_ip_list", data.whitelist_ipaddr);
     updateSelectipaddr("black_ip_list", data.blacklist_ipaddr);
 }
@@ -299,7 +332,7 @@ function getlocaldata(name, disallowid, allowid) {
     };
     sendPostRequest("/updateaccesscontrol", jsonData);
 }
-//保存按钮
+//ip保存按钮
 function update_ip_list(name, ip_select_id) {
     console.log(name)
     const ipselectid = document.getElementById(ip_select_id);
@@ -312,7 +345,7 @@ function update_ip_list(name, ip_select_id) {
     sendPostRequest("/updateiplist", jsonData);
 }
 
-//添加按钮
+//ip添加按钮
 function addiplist(from_id, to_id) {
     const fromSelect = document.getElementById(from_id);
     const content = fromSelect.value;
@@ -332,9 +365,51 @@ function addiplist(from_id, to_id) {
     fromSelect.value = "";
 }
 
+//请求方法添加
+function method_list_add(from_id, to_id) {
+    const fromSelect = document.getElementById(from_id);
+    const content = fromSelect.value;
+    if (content == "") {
+        alert("空值不能添加")
+        return;
+    }
+    const toSelect = document.getElementById(to_id);
+    const items = content.split(',');
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i].trim();
+        if (/^[A-Za-z]+$/.test(item)) {
+            //纯英文，转换为大写
+            const option = document.createElement("option");
+            option.textContent = item.toUpperCase();
+            toSelect.appendChild(option);
+        } else {
+            //不是纯英文
+            alert("输入非法")
+        }
+    }
+    fromSelect.value = "";
+}
+//请求方法删除
+function method_list_delete(from_id) {
+    const methoddeleteid = document.getElementById(from_id);
+    //sendPostRequest("/ipdel", jsonData);
+    for (let i = methoddeleteid.selectedOptions.length - 1; i >= 0; i--) {
+        methoddeleteid.remove(methoddeleteid.selectedOptions[i].index);
+    }
+}
+//请求方法保存
+function method_list_save(name, method_select_id) {//name = method_list
+    const methodselectid = document.getElementById(method_select_id);
+    const methodselects = Array.from(methodselectid.options).map(option => option.value);
+    const jsonData = {
+        [name]: methodselects
+    };
+    sendPostRequest("/updatemethodlist", jsonData);
+}
+
 //删除按钮
 function deleiplist(name, to_dele_id) {
-    console.log(name)
+    // console.log(name)
     const ipdeleteid = document.getElementById(to_dele_id);
     const ipdeletes = Array.from(ipdeleteid.selectedOptions).map(option => option.value);
     const jsonData = {

@@ -273,18 +273,36 @@
                     </div>
                     <div id="PolicyGroup" class="form-group hidden">
                         <strong>限制指定时间</strong><br />
-                        周期：<input type="text_t" name="range_t" value="60" />秒<br />
-                        次数：<input type="text_t" name="count_t" value="120" />次<br />
-                        封禁：<input type="text_t" name="ban_t" value="3600" />秒
+                        周期：<input type="text_t" name="range_t" value="-1" />秒<br />
+                        次数：<input type="text_t" name="count_t" value="-1" />次<br />
+                        封禁：<input type="text_t" name="ban_t" value="-1" />秒
                     </div>
                     <div id="PolicyGroup1" class="form-group hidden">
                         <strong>永久限制</strong><br />
-                        周期：<input type="text_t" name="range_t1" value="60" />秒<br />
-                        次数：<input type="text_t" name="count_t1" value="120" />次<br />
+                        周期：<input type="text_t" name="range_t1" value="-1" />秒<br />
+                        次数：<input type="text_t" name="count_t1" value="-1" />次<br />
                     </div>
                     <div class="form-group">
                         <button class="btn" onclick="updatescanerbtn()">保存</button>
                     </div>
+                </div>
+
+                <div class="box">
+                    <div class="sidebar">
+                        <p>请求方法</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="input_method_list" placeholder="ip">
+                        <button id="input_method_list_add"
+                            onclick="method_list_add('input_method_list','method_list')">Add</button>
+                    </div>
+                    <div class="column">
+                        <label>list:</label>
+                        <select class="method_list_class" id="method_list" multiple>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="method_list_save('method_list','method_list')">保存</button>
+                    <button class="btn" onclick="method_list_delete('method_list')">删除</button>
                 </div>
             </div>
         </div>

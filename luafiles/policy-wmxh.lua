@@ -138,7 +138,7 @@ else
     table.insert(insert_into_redis, country_name)
     table.insert(insert_into_redis, region_name)
     if wmxh.save_region_msg_to_redis(red, ipaddr, insert_into_redis) then
-        --ngx.log("save to redis ok")
+        ngx.log(ngx.INFO,"save to redis ok")
     end
 
     --优先级
@@ -153,6 +153,12 @@ else
 end
 --区域封禁结束--
 
+--http请求信息分割开始
+--请求方法
+--请求path
+--请求参数
+--请求头
+--请求体
 
 --请求方法匹配开始--
 local methmodlist = cjson.decode(access_config:get("methmod"))

@@ -5,5 +5,18 @@
     "liveServer.settings.port": 5528,
     "Lua.diagnostics.globals": [
         "ngx"
-    ]
+    ],
+    "files.associations": {
+        "iostream": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "ostream": "cpp",
+        "random": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
+    }
 }

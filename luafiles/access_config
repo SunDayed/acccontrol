@@ -1,8 +1,13 @@
 limit_type 1
 
 maintype 1
-childtype 0
+childtype 1
 
-limit_time 601
-limit_number 1201
-ban_t 3600
+limit_time 603
+limit_number 1203
+ban_t 3
+
+#规则库配置
+#0,policy关闭
+#1,policy开启
+policystatus 1
