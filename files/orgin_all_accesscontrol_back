@@ -1,0 +1,292 @@
+continent_AF 1
+continent_AN 1
+continent_AS 1
+continent_EU 1
+continent_NA 1
+continent_OC 1
+continent_SA 1
+country_Afghanistan 1
+country_Aland Islands 1
+country_Albania 1
+country_Algeria 1
+country_American Samoa 1
+country_Andorra 1
+country_Angola 1
+country_Anguilla 1
+country_Anonymous Proxy 1
+country_Antarctica 1
+country_Antigua and Barbuda 1
+country_Argentina 1
+country_Armenia 1
+country_Aruba 1
+country_Australia 1
+country_Austria 1
+country_Azerbaijan 1
+country_Bahamas 1
+country_Bahrain 1
+country_Bangladesh 1
+country_Barbados 1
+country_Belarus 1
+country_Belgium 1
+country_Belize 1
+country_Benin 1
+country_Bermuda 1
+country_Bhutan 1
+country_Bolivia 1
+country_Bosnia and Herzegovina 1
+country_Botswana 1
+country_Bouvet Island 1
+country_Brazil 1
+country_British Indian Ocean Territory 1
+country_Brunei Darussalam 1
+country_Bulgaria 1
+country_Burkina Faso 1
+country_Burundi 1
+country_Cambodia 1
+country_Cameroon 1
+country_Canada 1
+country_Cape Verde 1
+country_Cayman Islands 1
+country_Central African Republic 1
+country_Chad 1
+country_Chile 1
+country_China 1
+country_Christmas Island 1
+country_Cocos (Keeling) Islands 1
+country_Colombia 1
+country_Comoros 1
+country_Congo 1
+country_Congo, The Democratic Republic of the 1
+country_Cook Islands 1
+country_Costa Rica 1
+country_Cote D'Ivoire 1
+country_Croatia 1
+country_Cuba 1
+country_Cyprus 1
+country_Czech Republic 1
+country_Denmark 1
+country_Djibouti 1
+country_Dominica 1
+country_Dominican Republic 1
+country_Ecuador 1
+country_Egypt 1
+country_El Salvador 1
+country_Equatorial Guinea 1
+country_Eritrea 1
+country_Estonia 1
+country_Ethiopia 1
+country_Falkland Islands (Malvinas) 1
+country_Faroe Islands 1
+country_Fiji 1
+country_Finland 1
+country_France 1
+country_France, Metropolitan 1
+country_French Guiana 1
+country_French Polynesia 1
+country_French Southern Territories 1
+country_Gabon 1
+country_Gambia 1
+country_Georgia 1
+country_Germany 1
+country_Ghana 1
+country_Gibraltar 1
+country_Greece 1
+country_Greenland 1
+country_Grenada 1
+country_Guadeloupe 1
+country_Guam 1
+country_Guatemala 1
+country_Guernsey 1
+country_Guinea 1
+country_Guinea-Bissau 1
+country_Guyana 1
+country_Haiti 1
+country_Heard Island and McDonald Islands 1
+country_Holy See (Vatican City State) 1
+country_Honduras 1
+country_Hungary 1
+country_Iceland 1
+country_India 1
+country_Indonesia 1
+country_Iran, Islamic Republic of 1
+country_Iraq 1
+country_Ireland 1
+country_Isle of Man 1
+country_Israel 1
+country_Italy 1
+country_Jamaica 1
+country_Japan 1
+country_Jersey 1
+country_Jordan 1
+country_Kazakhstan 1
+country_Kenya 1
+country_Kiribati 1
+country_Korea, Democratic People's Republic of 1
+country_Korea, Republic of 1
+country_Kuwait 1
+country_Kyrgyzstan 1
+country_Lao People's Democratic Republic 1
+country_Latvia 1
+country_Lebanon 1
+country_Lesotho 1
+country_Liberia 1
+country_Libyan Arab Jamahiriya 1
+country_Liechtenstein 1
+country_Lithuania 1
+country_Luxembourg 1
+country_Macedonia 1
+country_Madagascar 1
+country_Malawi 1
+country_Malaysia 1
+country_Maldives 1
+country_Mali 1
+country_Malta 1
+country_Marshall Islands 1
+country_Martinique 1
+country_Mauritania 1
+country_Mauritius 1
+country_Mayotte 1
+country_Mexico 1
+country_Micronesia, Federated States of 1
+country_Moldova, Republic of 1
+country_Monaco 1
+country_Mongolia 1
+country_Montenegro 1
+country_Montserrat 1
+country_Morocco 1
+country_Mozambique 1
+country_Myanmar 1
+country_Namibia 1
+country_Nauru 1
+country_Nepal 1
+country_Netherlands 1
+country_Netherlands Antilles 1
+country_New Caledonia 1
+country_New Zealand 1
+country_Nicaragua 1
+country_NiKuwait 1
+country_Nihuania 1
+country_Ninia 1
+country_NiMorocco 1
+country_Niger 1
+country_Nigeria 1
+country_Niue 1
+country_Norfolk Island 1
+country_Northern Mariana Islands 1
+country_Norway 1
+country_Oman 1
+country_Other 1
+country_Pakistan 1
+country_Palau 1
+country_Palestinian Territory 1
+country_Panama 1
+country_Papua New Guinea 1
+country_Paraguay 1
+country_Peru 1
+country_Philippines 1
+country_Pitcairn Islands 1
+country_Poland 1
+country_Portugal 1
+country_Puerto Rico 1
+country_Qatar 1
+country_Reunion 1
+country_Romania 1
+country_Russian Federation 1
+country_Rwanda 1
+country_Saint Barthelemy 1
+country_Saint Helena 1
+country_Saint Kitts and Nevis 1
+country_Saint Lucia 1
+country_Saint Martin 1
+country_Saint Pierre and Miquelon 1
+country_Saint Vincent and the Grenadines 1
+country_Samoa 1
+country_San Marino 1
+country_Sao Tome and Principe 1
+country_Satellite Provider 1
+country_Saudi Arabia 1
+country_Senegal 1
+country_Serbia 1
+country_Seychelles 1
+country_Sierra Leone 1
+country_Singapore 1
+country_Slovakia 1
+country_Slovenia 1
+country_Solomon Islands 1
+country_Somalia 1
+country_South Africa 1
+country_South Georgia and the South Sandwich Islands 1
+country_Spain 1
+country_Sri Lanka 1
+country_Sudan 1
+country_Suriname 1
+country_Svalbard and Jan Mayen 1
+country_Swaziland 1
+country_Sweden 1
+country_Switzerland 1
+country_Syrian Arab Republic 1
+country_Tajikistan 1
+country_Tanzania, United Republic of 1
+country_Thailand 1
+country_Timor-Leste 1
+country_Togo 1
+country_Tokelau 1
+country_Tonga 1
+country_Trinidad and Tobago 1
+country_Tunisia 1
+country_Turkey 1
+country_Turkmenistan 1
+country_Turks and Caicos Islands 1
+country_Tuvalu 1
+country_Uganda 1
+country_Ukraine 1
+country_United Arab Emirates 1
+country_United Kingdom 1
+country_United States 1
+country_United States Minor Outlying Islands 1
+country_Uruguay 1
+country_Uzbekistan 1
+country_Vanuatu 1
+country_Venezuela 1
+country_Vietnam 1
+country_Virgin Islands, British 1
+country_Virgin Islands, U.S. 1
+country_Wallis and Futuna 1
+country_Western Sahara 1
+country_Yemen 1
+country_Zambia 1
+country_Zimbabwe 1
+region_Anhui 1
+region_Beijing 1
+region_Chongqing 1
+region_Fujian 1
+region_Gansu 1
+region_Guangdong 1
+region_Guangxi 1
+region_Guizhou 1
+region_Hainan 1
+region_Hebei 1
+region_Heilongjiang 1
+region_Henan 1
+region_Hong Kong 1
+region_Hubei 1
+region_Hunan 1
+region_Jiangsu 1
+region_Jiangxi 1
+region_Jilin 1
+region_Liaoning 1
+region_Macau 1
+region_Nei Mongol 1
+region_Ningxia 1
+region_Qinghai 1
+region_Shaanxi 1
+region_Shandong 1
+region_Shanghai 1
+region_Shanxi 1
+region_Sichuan 1
+region_Taiwan 1
+region_Tianjin 1
+region_Xinjiang 1
+region_Xizang 1
+region_Yunnan 1
+region_Zhejiang 1

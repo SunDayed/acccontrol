@@ -1,0 +1,54 @@
+# 防火墙状态 0-关闭 1-开启
+global_config 1
+
+# 真实ip规则 字段名不区分大小写
+realIpHeader X-Custom-IP
+
+# -- 限流规则配置
+# 限流策略状态 0-关闭 1-开启
+maintype 0
+# 0为永久黑名单，1为指定时间的黑名单，3为断开新建连接
+childtype 1
+# 检测时间
+limit_time 3
+# 单位时间内访问次数
+limit_number 8
+# 限制访问时间
+ban_t 86400
+
+#   防扫描规则配置
+# 防扫描策略状态
+cc_maintype 0
+# 0为永久黑名单，1为指定时间的黑名单，3为断开新建连接
+cc_childtype 1
+# 检测时间
+cc_limit_time 10
+# 单位时间内访问次数
+cc_limit_number 2
+# 限制访问时间
+cc_ban_t 300
+cc_alerm_code 456 457 458 459 460 468
+
+# 全量日志开关 0-仅记录拦截日志 1-记录所有日志
+full_log 1
+
+#规则库配置
+#0,policy关闭
+#1,policy开启
+
+policystatus 1
+
+# -- 规则ID配置（模块级别，用于拦截日志和响应标识）
+rule_id_blacklist 1001
+rule_id_whitelist 1002
+rule_id_region_block 1003
+rule_id_rate_limit 1004
+rule_id_anti_scan 1005
+rule_id_method 1006
+rule_id_path 1007
+rule_id_param 1008
+rule_id_header 1009
+
+# Token 有效期（秒），0=默认86400，-1=永不过期
+active_time 0
+

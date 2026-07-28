@@ -1,0 +1,1 @@
+[{"rule_type":"blacklist","action":"block","match_type":"prefix","header_name":"qwe","value":"123"},{"rule_type":"blacklist","action":"block","match_type":"exact","header_name":"asd","value":"qwe"},{"value":"11","action":"block","header_name":"11","rule_type":"blacklist","match_type":"exact"}]

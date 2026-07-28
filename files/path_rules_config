@@ -1,0 +1,1 @@
+[{"path":"123","action":"block","match_type":"exact","rule_type":"blacklist"},{"path":"qweasd","action":"block","match_type":"exact","rule_type":"blacklist"}]

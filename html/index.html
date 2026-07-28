@@ -1,0 +1,1108 @@
+<!doctype html>
+<html class="no-js" lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>控制台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/lib/leaflet.css">
+  <meta name="description" content="访问控制与配置页面">
+
+  <meta property="og:title" content="控制台">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="控制台示例">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <strong data-i18n="nav.brand">控制台</strong>
+      </div>
+      <nav class="sidebar-nav">
+        <button type="button" class="sidebar-child" data-page="dashboard" data-i18n="nav.dashboard">总体看板</button>
+        <button type="button" class="sidebar-group" data-group="visit-control" aria-expanded="true" data-i18n="nav.visit_control">
+          访问控制
+        </button>
+        <ul class="sidebar-submenu" data-group="visit-control">
+          <li><button type="button" class="sidebar-child active" data-page="region-block" data-i18n="nav.region_block">地区封禁</button></li>
+          <li><button type="button" class="sidebar-child" data-page="black-white" data-i18n="nav.black_white">黑白名单</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rate-limit" data-i18n="nav.rate_limit">限流策略</button></li>
+          <li><button type="button" class="sidebar-child" data-page="anti-scan" data-i18n="nav.anti_scan">防扫描</button></li>
+        </ul>
+
+        <button type="button" class="sidebar-group" data-group="http-rule" aria-expanded="false" data-i18n="nav.http_rules">
+          HTTP规则
+        </button>
+        <ul class="sidebar-submenu hidden" data-group="http-rule">
+          <li><button type="button" class="sidebar-child" data-page="rule-method" data-i18n="nav.method">请求方法</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rule-path" data-i18n="nav.path">请求路径</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rule-params" data-i18n="nav.params">请求参数</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rule-headers" data-i18n="nav.headers">请求头</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rule-regex" data-i18n="nav.regex">规则库</button></li>
+          <li><button type="button" class="sidebar-child" data-page="rule-userdef" data-i18n="nav.userdef">自定义规则</button></li>
+        </ul>
+
+        <button type="button" class="sidebar-group" data-group="log-info" aria-expanded="false" data-i18n="nav.log_info">
+          日志信息
+        </button>
+        <ul class="sidebar-submenu hidden" data-group="log-info">
+          <li><button type="button" class="sidebar-child" data-page="http-log" data-i18n="nav.http_log">HTTP日志</button></li>
+        </ul>
+
+        <button type="button" class="sidebar-group" data-group="system-config" aria-expanded="false" data-i18n="nav.system_config">
+          系统配置
+        </button>
+        <ul class="sidebar-submenu hidden" data-group="system-config">
+          <li><button type="button" class="sidebar-child" data-page="system-params" data-i18n="nav.system_params">系统参数</button></li>
+        </ul>
+
+        <div class="sidebar-logout-wrap">
+          <button type="button" class="sidebar-logout-btn" id="sidebar-logout-btn" data-i18n="nav.logout">退出登录</button>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-panel">
+      <header class="main-header">
+        <h1 id="page-title" data-i18n="page.dashboard">总体看板</h1>
+      </header>
+
+      <section class="page-panel" id="dashboard">
+        <div class="dashboard-top-row">
+          <div class="panel dashboard-server-panel">
+            <h2 data-i18n="dashboard.server_resources">服务器资源</h2>
+            <div id="server-status-content" class="server-status-content">
+              <span class="empty-hint" data-i18n="dashboard.loading">加载中...</span>
+            </div>
+          </div>
+          <div class="panel dashboard-memory-panel">
+            <h2 data-i18n="dashboard.shared_memory">共享内存</h2>
+            <div class="mem-table-wrap">
+              <table class="mem-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="dashboard.mem_dict">字典</th>
+                    <th data-i18n="dashboard.mem_usage_rate">使用率</th>
+                    <th data-i18n="dashboard.mem_usage">内存用量</th>
+                    <th data-i18n="dashboard.mem_entries">条目</th>
+                  </tr>
+                </thead>
+                <tbody id="mem-table-body">
+                  <tr><td colspan="4" class="empty-hint" data-i18n="dashboard.loading">加载中...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel dashboard-map-panel">
+          <h2 data-i18n="dashboard.china_heatmap">中国访问热力图</h2>
+          <div class="map-filter-bar">
+            <label><span data-i18n="dashboard.start_time">开始时间</span> <input type="datetime-local" id="map-start-time"></label>
+            <label><span data-i18n="dashboard.end_time">结束时间</span> <input type="datetime-local" id="map-end-time"></label>
+            <div class="map-type-selector">
+              <label class="radio-label"><input type="radio" name="map-type" value="china" checked><span class="radio-label-text" data-i18n="dashboard.map_type_china">中国地图</span></label>
+              <label class="radio-label"><input type="radio" name="map-type" value="world"><span class="radio-label-text" data-i18n="dashboard.map_type_world">世界地图</span></label>
+            </div>
+            <button type="button" class="btn btn-primary" id="map-query-btn" style="width:auto;padding:8px 18px;" data-i18n="dashboard.query">查询</button>
+          </div>
+          <div class="china-map-layout">
+            <div class="china-map-left">
+              <div class="china-map-container" id="china-map-container"></div>
+              <div class="map-legend">
+                <span data-i18n="dashboard.low">低</span>
+                <span class="legend-scale"></span>
+                <span data-i18n="dashboard.high">高</span>
+              </div>
+            </div>
+            <div class="china-map-right">
+              <div class="province-list-header" id="map-ranking-header" data-i18n="dashboard.province_ranking">省份访问排行</div>
+              <div class="province-list-wrap" id="province-list-wrap"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel" id="region-block">
+        <div class="panel panel-action">
+          <div class="panel-row region-ip-row">
+            <input id="region-ip-input" type="text" data-i18n-placeholder="region.input_placeholder" placeholder="输入 IP 地址查询归属地" />
+            <button type="button" class="btn btn-primary" id="open-region-add" data-i18n="region.query">查询</button>
+          </div>
+        </div>
+
+        <div class="region-grid">
+          <div class="panel">
+            <h2 data-i18n="region.province_block">省份封禁</h2>
+            <div class="region-toolbar">
+              <input class="region-search" data-group="province" type="text" data-i18n-placeholder="region.search_province" placeholder="搜索省份..." />
+              <span class="rule-count" id="province-count"></span>
+            </div>
+            <div class="path-rule-table-wrap">
+              <table class="path-rule-table">
+                <thead><tr><th data-i18n="region.name">名称</th><th data-i18n="region.status">状态</th><th data-i18n="region.action">操作</th></tr></thead>
+                <tbody id="province-table-body"></tbody>
+              </table>
+            </div>
+            <div class="panel-footer">
+              <button type="button" class="btn btn-primary" data-action="save-region" data-group="province" data-i18n="region.save">保存</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 data-i18n="region.country_block">国家封禁</h2>
+            <div class="region-toolbar">
+              <input class="region-search" data-group="country" type="text" data-i18n-placeholder="region.search_country" placeholder="搜索国家..." />
+              <span class="rule-count" id="country-count"></span>
+            </div>
+            <div class="path-rule-table-wrap">
+              <table class="path-rule-table">
+                <thead><tr><th data-i18n="region.name">名称</th><th data-i18n="region.status">状态</th><th data-i18n="region.action">操作</th></tr></thead>
+                <tbody id="country-table-body"></tbody>
+              </table>
+            </div>
+            <div class="panel-footer">
+              <button type="button" class="btn btn-primary" data-action="save-region" data-group="country" data-i18n="region.save">保存</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 data-i18n="region.continent_block">大陆封禁</h2>
+            <div class="region-toolbar">
+              <input class="region-search" data-group="continent" type="text" data-i18n-placeholder="region.search_continent" placeholder="搜索大陆..." />
+              <span class="rule-count" id="continent-count"></span>
+            </div>
+            <div class="path-rule-table-wrap">
+              <table class="path-rule-table">
+                <thead><tr><th data-i18n="region.name">名称</th><th data-i18n="region.status">状态</th><th data-i18n="region.action">操作</th></tr></thead>
+                <tbody id="continent-table-body"></tbody>
+              </table>
+            </div>
+            <div class="panel-footer">
+              <button type="button" class="btn btn-primary" data-action="save-region" data-group="continent" data-i18n="region.save">保存</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel hidden" id="black-white">
+        <div class="black-white-grid">
+          <div class="panel">
+            <h2 data-i18n="bw.blacklist">黑名单 IP</h2>
+            <div class="input-group">
+              <textarea id="blacklist-input" data-i18n-placeholder="bw.input_placeholder" placeholder="使用英文逗号 , 批量添加 IP，例如 1.2.3.4, 5.6.7.8"></textarea>
+              <button type="button" class="btn btn-secondary" id="blacklist-add-btn" data-i18n="bw.add">添加</button>
+            </div>
+            <div class="path-rule-table-wrap">
+              <table class="path-rule-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px"><input type="checkbox" id="blacklist-select-all" data-i18n-title="bw.select_all" title="全选"></th>
+                    <th data-i18n="bw.ip_address">IP 地址</th>
+                    <th data-i18n="bw.add_time">添加时间</th>
+                  </tr>
+                </thead>
+                <tbody id="blacklist-table-body">
+                  <tr><td colspan="3" class="empty-hint" data-i18n="bw.no_blacklist">暂无黑名单 IP</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel-footer">
+              <span id="blacklist-count" class="rule-count">共 0 条</span>
+              <div style="display:flex;gap:10px;">
+                <button type="button" class="btn btn-outline" id="blacklist-delete-btn" data-i18n="bw.delete_selected">删除选中</button>
+                <button type="button" class="btn btn-primary" id="blacklist-save-btn" data-i18n="bw.save">保存</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 data-i18n="bw.whitelist">白名单 IP</h2>
+            <div class="input-group">
+              <textarea id="whitelist-input" data-i18n-placeholder="bw.input_placeholder" placeholder="使用英文逗号 , 批量添加 IP，例如 1.2.3.4, 5.6.7.8"></textarea>
+              <button type="button" class="btn btn-secondary" id="whitelist-add-btn" data-i18n="bw.add">添加</button>
+            </div>
+            <div class="path-rule-table-wrap">
+              <table class="path-rule-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px"><input type="checkbox" id="whitelist-select-all" data-i18n-title="bw.select_all" title="全选"></th>
+                    <th data-i18n="bw.ip_address">IP 地址</th>
+                    <th data-i18n="bw.add_time">添加时间</th>
+                  </tr>
+                </thead>
+                <tbody id="whitelist-table-body">
+                  <tr><td colspan="3" class="empty-hint" data-i18n="bw.no_whitelist">暂无白名单 IP</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel-footer">
+              <span id="whitelist-count" class="rule-count">共 0 条</span>
+              <div style="display:flex;gap:10px;">
+                <button type="button" class="btn btn-outline" id="whitelist-delete-btn" data-i18n="bw.delete_selected">删除选中</button>
+                <button type="button" class="btn btn-primary" id="whitelist-save-btn" data-i18n="bw.save">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="page-panel hidden" id="rate-limit">
+        <div class="panel">
+          <h2 data-i18n="ratelimit.title">限流策略配置</h2>
+          <div class="panel-action">
+            <div class="radio-group">
+              <label><input type="radio" name="limit-enabled" value="on"> <span data-i18n="ratelimit.enabled">开启</span></label>
+              <label><input type="radio" name="limit-enabled" value="off" checked> <span data-i18n="ratelimit.disabled">关闭</span></label>
+            </div>
+          </div>
+          <div id="limit-settings">
+            <div class="radio-group">
+              <label><input type="radio" name="limit-type" value="permanent" checked> <span data-i18n="ratelimit.permanent">永久封禁</span></label>
+              <label><input type="radio" name="limit-type" value="timed"> <span data-i18n="ratelimit.timed">指定时间</span></label>
+              <label><input type="radio" name="limit-type" value="disconnect"> <span data-i18n="ratelimit.disconnect">断开新建连接</span></label>
+            </div>
+            <div class="limit-detail" id="limit-permanent">
+              <label><span data-i18n="ratelimit.period">周期</span> <input type="text" id="limit-permanent-period" data-i18n-placeholder="ratelimit.placeholder_period" placeholder="检测周期"> <span data-i18n="ratelimit.seconds">秒</span></label>
+              <label><span data-i18n="ratelimit.count">次数</span> <input type="text" id="limit-permanent-count" data-i18n-placeholder="ratelimit.placeholder_count" placeholder="周期内次数"> <span data-i18n="ratelimit.times">次</span></label>
+            </div>
+            <div class="limit-detail hidden" id="limit-timed">
+              <label><span data-i18n="ratelimit.period">周期</span> <input type="text" id="limit-timed-period" data-i18n-placeholder="ratelimit.placeholder_period" placeholder="检测周期"> <span data-i18n="ratelimit.seconds">秒</span></label>
+              <label><span data-i18n="ratelimit.count">次数</span> <input type="text" id="limit-timed-count" data-i18n-placeholder="ratelimit.placeholder_count" placeholder="周期内次数"> <span data-i18n="ratelimit.times">次</span></label>
+              <label><span data-i18n="ratelimit.ban_duration">封禁</span> <input type="text" id="limit-timed-duration" data-i18n-placeholder="ratelimit.placeholder_duration" placeholder="限制时间"> <span data-i18n="ratelimit.seconds">秒</span></label>
+            </div>
+            <div class="limit-detail hidden" id="limit-disconnect">
+              <p data-i18n="ratelimit.waiting_update">等待更新</p>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-primary" id="limit-config-save-btn" style="width:auto;padding:10px 24px;" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+
+        <div class="panel" id="blocked-ip-panel">
+          <h2 data-i18n="ratelimit.blocked_ip_list">封禁 IP 列表</h2>
+          <div class="input-group">
+            <textarea id="blocked-ip-input" data-i18n-placeholder="ratelimit.input_placeholder" placeholder="使用英文逗号 , 批量添加 IP"></textarea>
+            <button type="button" class="btn btn-secondary" id="blocked-ip-add-btn" data-i18n="bw.add">添加</button>
+          </div>
+          <div class="path-rule-table-wrap">
+            <table class="path-rule-table">
+              <thead>
+                <tr>
+                  <th style="width:40px"><input type="checkbox" id="blocked-ip-select-all" data-i18n-title="bw.select_all" title="全选"></th>
+                  <th data-i18n="bw.ip_address">IP 地址</th>
+                  <th data-i18n="ratelimit.remark">备注</th>
+                </tr>
+              </thead>
+              <tbody id="blocked-ip-table-body">
+                <tr><td colspan="3" class="empty-hint" data-i18n="ratelimit.no_blocked">暂无封禁 IP</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-outline" id="blocked-ip-delete-btn" data-i18n="bw.delete_selected">删除选中</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel hidden" id="anti-scan">
+        <div class="panel">
+          <h2 data-i18n="antiscan.status_code_mgmt">状态码管理</h2>
+          <p class="panel-desc" data-i18n="antiscan.desc">配置防扫描监测的状态码，支持单个（404）或范围（501-507）输入，保存后生效。可拖拽框选批量删除。</p>
+
+          <div class="method-add-form">
+            <div class="method-add-row">
+              <input id="scan-code-input" type="text" data-i18n-placeholder="antiscan.single_range_hint" placeholder="单个：404  范围：501-507" />
+              <button type="button" class="btn btn-primary" id="scan-code-add-btn" style="width:auto;padding:10px 18px;" data-i18n="antiscan.add">添加</button>
+            </div>
+          </div>
+
+          <div class="method-tags-wrap" id="scan-code-tags-wrap">
+            <span class="method-empty-hint" id="scan-code-empty-hint" data-i18n="antiscan.no_codes">暂无状态码，请在上方添加。</span>
+          </div>
+
+          <div class="panel-footer">
+            <span id="scan-code-count" class="rule-count">共 0 个状态码</span>
+            <div style="display:flex;gap:10px;">
+              <button type="button" class="btn btn-outline" id="scan-code-delete-sel-btn" style="width:auto;padding:10px 16px;display:none;" data-i18n="antiscan.delete_selected">删除选中</button>
+              <button type="button" class="btn btn-primary" id="scan-code-save-btn" style="width:auto;padding:10px 24px;" data-i18n="antiscan.save">保存</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2 data-i18n="antiscan.config_title">防扫描配置</h2>
+          <div class="panel-action">
+            <div class="radio-group">
+              <label><input type="radio" name="scan-enabled" value="on"> <span data-i18n="ratelimit.enabled">开启</span></label>
+              <label><input type="radio" name="scan-enabled" value="off" checked> <span data-i18n="ratelimit.disabled">关闭</span></label>
+            </div>
+          </div>
+          <div id="scan-settings">
+            <div class="radio-group">
+              <label><input type="radio" name="scan-type" value="permanent" checked> <span data-i18n="ratelimit.permanent">永久封禁</span></label>
+              <label><input type="radio" name="scan-type" value="timed"> <span data-i18n="ratelimit.timed">指定时间</span></label>
+            </div>
+            <div class="limit-detail" id="scan-permanent">
+              <label><span data-i18n="ratelimit.period">周期</span> <input type="text" id="scan-permanent-period" data-i18n-placeholder="ratelimit.placeholder_period" placeholder="检测周期"> <span data-i18n="ratelimit.seconds">秒</span></label>
+              <label><span data-i18n="ratelimit.count">次数</span> <input type="text" id="scan-permanent-count" data-i18n-placeholder="ratelimit.placeholder_count" placeholder="指定次数"> <span data-i18n="ratelimit.times">次</span></label>
+            </div>
+            <div class="limit-detail hidden" id="scan-timed">
+              <label><span data-i18n="ratelimit.period">周期</span> <input type="text" id="scan-timed-period" data-i18n-placeholder="ratelimit.placeholder_period" placeholder="检测周期"> <span data-i18n="ratelimit.seconds">秒</span></label>
+              <label><span data-i18n="ratelimit.count">次数</span> <input type="text" id="scan-timed-count" data-i18n-placeholder="ratelimit.placeholder_count" placeholder="请输入次数"> <span data-i18n="ratelimit.times">次</span></label>
+              <label><span data-i18n="ratelimit.ban_duration">封禁</span> <input type="text" id="scan-timed-duration" data-i18n-placeholder="ratelimit.placeholder_duration" placeholder="请输入封禁时间"> <span data-i18n="ratelimit.seconds">秒</span></label>
+            </div>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-primary" id="scan-config-save-btn" style="width:auto;padding:10px 24px;" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="cc-blocked-ip-panel">
+          <h2 data-i18n="antiscan.cc_blocked_title">CC 封禁 IP 列表</h2>
+          <div class="input-group">
+            <textarea id="cc-blocked-ip-input" data-i18n-placeholder="ratelimit.input_placeholder" placeholder="使用英文逗号 , 批量添加 IP"></textarea>
+            <button type="button" class="btn btn-secondary" id="cc-blocked-ip-add-btn" data-i18n="bw.add">添加</button>
+          </div>
+          <div class="path-rule-table-wrap">
+            <table class="path-rule-table">
+              <thead>
+                <tr>
+                  <th style="width:40px"><input type="checkbox" id="cc-blocked-ip-select-all" data-i18n-title="bw.select_all" title="全选"></th>
+                  <th data-i18n="bw.ip_address">IP 地址</th>
+                  <th data-i18n="ratelimit.remark">备注</th>
+                </tr>
+              </thead>
+              <tbody id="cc-blocked-ip-table-body">
+                <tr><td colspan="3" class="empty-hint" data-i18n="ratelimit.no_blocked">暂无封禁 IP</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel-footer">
+            <button type="button" class="btn btn-outline" id="cc-blocked-ip-delete-btn" data-i18n="bw.delete_selected">删除选中</button>
+          </div>
+        </div>
+      </section>
+      <section class="page-panel hidden" id="rule-method">
+        <div class="panel">
+          <h2 data-i18n="method.title">请求方法规则</h2>
+          <p class="panel-desc" data-i18n="method.desc">在这里配置允许的 HTTP 方法，例如 GET、POST、PUT、DELETE 等。输入方法名称后点击添加，保存后生效。</p>
+
+          <div class="method-add-form">
+            <div class="method-add-row">
+              <input id="method-input" type="text" data-i18n-placeholder="method.input_placeholder" placeholder="输入请求方法，如 GET" maxlength="20" />
+              <button type="button" class="btn btn-primary" id="method-add-btn" style="width:auto;padding:10px 18px;" data-i18n="common.add">添加</button>
+            </div>
+          </div>
+
+          <div class="method-tags-wrap" id="method-tags-wrap">
+            <span class="method-empty-hint" id="method-empty-hint" data-i18n="method.no_methods">暂无方法，请在上方添加。</span>
+          </div>
+
+          <div class="panel-footer">
+            <span id="method-count" class="rule-count">共 0 个方法</span>
+            <button type="button" class="btn btn-primary" id="method-save-btn" style="width:auto;padding:10px 24px;" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+      </section>
+      <section class="page-panel hidden" id="rule-path">
+        <div class="panel">
+          <h2 data-i18n="path.title">请求路径规则</h2>
+          <p class="panel-desc" data-i18n="path.desc">配置请求路径的黑白名单规则，支持前缀匹配和精确匹配，动作可设置为放行或阻断。</p>
+
+          <div class="path-rule-add-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label data-i18n="path.path_label">请求路径</label>
+                <input id="path-rule-input" type="text" data-i18n-placeholder="path.input_placeholder" placeholder="/api/example" />
+              </div>
+              <div class="form-field">
+                <label data-i18n="path.type_label">名单类型</label>
+                <select id="path-rule-type">
+                  <option value="blacklist" data-i18n="path.blacklist">黑名单</option>
+                  <option value="whitelist" data-i18n="path.whitelist">白名单</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label data-i18n="path.match_label">匹配方式</label>
+                <select id="path-rule-match">
+                  <option value="prefix" data-i18n="path.match_prefix">前缀匹配</option>
+                  <option value="exact" data-i18n="path.match_exact">精确匹配</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label data-i18n="path.action_label">动作</label>
+                <select id="path-rule-action">
+                  <option value="block" data-i18n="path.action_block">阻断</option>
+                  <option value="allow" data-i18n="path.action_allow">放行</option>
+                </select>
+              </div>
+              <div class="form-field form-field-btn">
+                <button type="button" class="btn btn-primary" id="path-rule-add-btn" data-i18n="common.add">添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="path-rule-table-wrap">
+            <table class="path-rule-table">
+              <thead>
+                <tr>
+                  <th data-i18n="path.path_label">请求路径</th>
+                  <th data-i18n="path.type_label">名单类型</th>
+                  <th data-i18n="path.match_label">匹配方式</th>
+                  <th data-i18n="path.action_label">动作</th>
+                  <th data-i18n="region.action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="path-rule-table-body">
+                <tr>
+                  <td colspan="5" class="empty-hint" data-i18n="path.no_rules">暂无规则，请在上方添加。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel-footer">
+            <span id="path-rule-count" class="rule-count">共 0 条规则</span>
+            <button type="button" class="btn btn-primary" id="path-rule-save-btn" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section class="page-panel hidden" id="rule-params">
+        <div class="panel">
+          <h2 data-i18n="param.title">请求参数规则</h2>
+          <p class="panel-desc" data-i18n="param.desc">配置请求参数规则，参数名精确匹配，参数值支持前缀/包含/精确匹配，动作可设置为拦截或阻断。</p>
+
+          <div class="path-rule-add-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label data-i18n="param.name_label">参数名称</label>
+                <input id="param-rule-name-input" type="text" data-i18n-placeholder="param.input_placeholder_name" placeholder="userid" />
+              </div>
+              <div class="form-field">
+                <label data-i18n="param.match_label">匹配方式</label>
+                <select id="param-rule-match">
+                  <option value="exact" data-i18n="param.match_exact">精确匹配</option>
+                  <option value="prefix" data-i18n="param.match_prefix">前缀匹配</option>
+                  <option value="contains" data-i18n="param.match_contains">包含匹配</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label data-i18n="param.value_label">匹配值</label>
+                <input id="param-rule-value-input" type="text" data-i18n-placeholder="param.input_placeholder_value" placeholder="匹配值" />
+              </div>
+              <div class="form-field">
+                <label data-i18n="param.action_label">动作</label>
+                <select id="param-rule-action">
+                  <option value="block" data-i18n="param.action_block">阻断</option>
+                  <option value="intercept" data-i18n="param.action_intercept">拦截</option>
+                </select>
+              </div>
+              <div class="form-field form-field-btn">
+                <button type="button" class="btn btn-primary" id="param-rule-add-btn" data-i18n="common.add">添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="path-rule-table-wrap">
+            <table class="path-rule-table">
+              <thead>
+                <tr>
+                  <th data-i18n="param.name_label">参数名称</th>
+                  <th data-i18n="param.match_label">匹配方式</th>
+                  <th data-i18n="param.value_label">匹配值</th>
+                  <th data-i18n="param.action_label">动作</th>
+                  <th data-i18n="region.action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="param-rule-table-body">
+                <tr>
+                  <td colspan="5" class="empty-hint" data-i18n="param.no_rules">暂无规则，请在上方添加。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel-footer">
+            <span id="param-rule-count" class="rule-count">共 0 条规则</span>
+            <button type="button" class="btn btn-primary" id="param-rule-save-btn" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel hidden" id="rule-headers">
+        <div class="panel">
+          <h2 data-i18n="header.title">请求头规则</h2>
+          <p class="panel-desc" data-i18n="header.desc">配置请求头的黑白名单规则，支持精确匹配、前缀匹配和包含匹配，动作可设置为放行或阻断。匹配时忽略大小写。</p>
+
+          <div class="path-rule-add-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label data-i18n="header.name_label">请求头名称</label>
+                <input id="header-rule-input" type="text" data-i18n-placeholder="header.input_placeholder" placeholder="User-Agent" />
+              </div>
+              <div class="form-field">
+                <label data-i18n="path.type_label">名单类型</label>
+                <select id="header-rule-type">
+                  <option value="blacklist" data-i18n="path.blacklist">黑名单</option>
+                  <option value="whitelist" data-i18n="path.whitelist">白名单</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label data-i18n="header.match_label">匹配方式</label>
+                <select id="header-rule-match">
+                  <option value="exact" data-i18n="header.match_exact">精确匹配</option>
+                  <option value="prefix" data-i18n="header.match_prefix">前缀匹配</option>
+                  <option value="contains" data-i18n="header.match_contains">包含匹配</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label data-i18n="header.value_label">匹配值</label>
+                <input id="header-rule-value" type="text" data-i18n-placeholder="header.value_placeholder" placeholder="Mozilla/5.0" />
+              </div>
+              <div class="form-field">
+                <label data-i18n="header.action_label">动作</label>
+                <select id="header-rule-action">
+                  <option value="block" data-i18n="header.action_block">阻断</option>
+                  <option value="allow" data-i18n="header.action_allow">放行</option>
+                </select>
+              </div>
+              <div class="form-field form-field-btn">
+                <button type="button" class="btn btn-primary" id="header-rule-add-btn" data-i18n="common.add">添加</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="path-rule-table-wrap">
+            <table class="path-rule-table">
+              <thead>
+                <tr>
+                  <th data-i18n="header.name_label">请求头名称</th>
+                  <th data-i18n="path.type_label">名单类型</th>
+                  <th data-i18n="header.match_label">匹配方式</th>
+                  <th data-i18n="header.value_label">匹配值</th>
+                  <th data-i18n="header.action_label">动作</th>
+                  <th data-i18n="region.action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="header-rule-table-body">
+                <tr>
+                  <td colspan="6" class="empty-hint" data-i18n="header.no_rules">暂无规则，请在上方添加。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel-footer">
+            <span id="header-rule-count" class="rule-count">共 0 条规则</span>
+            <button type="button" class="btn btn-primary" id="header-rule-save-btn" data-i18n="common.save">保存</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel hidden" id="rule-regex">
+        <div class="panel">
+          <div class="sig-panel-head">
+            <h2 data-i18n="sig.title">规则库</h2>
+            <button type="button" class="btn btn-primary" id="sig-add-btn" data-i18n="sig.add">新增</button>
+            <button type="button" class="btn btn-danger" id="sig-delete-btn" disabled data-i18n="sig.delete_selected">删除选中</button>
+          </div>
+          <div class="log-filter-grid sig-filter-grid">
+            <label>
+              <span data-i18n="sig.filter_id">规则 ID</span>
+              <input id="sig-filter-id" type="text" data-i18n-placeholder="sig.filter_id_placeholder" placeholder="输入规则ID，支持模糊搜索" />
+            </label>
+            <label>
+              <span data-i18n="sig.filter_content">规则内容</span>
+              <input id="sig-filter-content" type="text" data-i18n-placeholder="sig.filter_content_placeholder" placeholder="输入字符串，匹配规则内容" />
+            </label>
+            <label>
+              <span data-i18n="sig.filter_category">适用范围</span>
+              <select id="sig-filter-category">
+                <option value="" selected data-i18n="sig.filter_all">全部</option>
+                <option value="uri" data-i18n="sig.scope_uri">请求路径</option>
+                <option value="param" data-i18n="sig.scope_param">请求参数</option>
+                <option value="header" data-i18n="sig.scope_header">请求头</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="sig.filter_score">风险等级</span>
+              <select id="sig-filter-score">
+                <option value="" selected data-i18n="sig.filter_all">全部</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="sig.filter_status">规则状态</span>
+              <select id="sig-filter-status">
+                <option value="" selected data-i18n="sig.filter_all">全部</option>
+                <option value="0" data-i18n="sig.status_on">开启</option>
+                <option value="1" data-i18n="sig.status_off">关闭</option>
+                <option value="2" data-i18n="sig.status_alert">告警</option>
+              </select>
+            </label>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-outline" id="sig-filter-clear" data-i18n="sig.reset">重置</button>
+              <button type="button" class="btn btn-primary" id="sig-filter-search" data-i18n="sig.search">搜索</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="log-table sig-table">
+              <thead>
+                <tr>
+                  <th class="col-sigcheck"><input type="checkbox" id="sig-select-all" title="全选当前页"></th>
+                  <th class="col-sigid" data-i18n="sig.col_id">规则ID</th>
+                  <th class="col-sigscore" data-i18n="sig.col_score">风险等级</th>
+                  <th class="col-sigscope" data-i18n="sig.col_scope">适用范围</th>
+                  <th class="col-signame" data-i18n="sig.col_name">规则名称</th>
+                  <th class="col-sigdesc" data-i18n="sig.col_desc">规则描述</th>
+                  <th class="col-sigcontent" data-i18n="sig.col_content">规则内容</th>
+                  <th class="col-sigstatus" data-i18n="sig.col_status">状态</th>
+                  <th class="col-sigaction" data-i18n="sig.col_action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="sig-table-body"></tbody>
+            </table>
+          </div>
+          <div class="log-pagination">
+            <div class="log-pagination-left">
+              <label><span data-i18n="sig.page_size_label">每页</span>
+                <select id="sig-page-size">
+                  <option value="10">10</option>
+                  <option value="15" selected>15</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+                <span data-i18n="sig.page_size_suffix">条</span>
+              </label>
+            </div>
+            <div class="log-pagination-center">
+              <button type="button" class="pagination-btn" id="sig-page-first" data-i18n-title="sig.page_first" title="首页">«</button>
+              <button type="button" class="pagination-btn" id="sig-page-prev" data-i18n-title="sig.page_prev" title="上一页">‹</button>
+              <span class="pagination-info" id="sig-page-info">第 1/1 页（共 0 条）</span>
+              <button type="button" class="pagination-btn" id="sig-page-next" data-i18n-title="sig.page_next" title="下一页">›</button>
+              <button type="button" class="pagination-btn" id="sig-page-last" data-i18n-title="sig.page_last" title="末页">»</button>
+            </div>
+            <div class="log-pagination-right">
+              <label><span data-i18n="sig.page_jump_to">跳至</span>
+                <input type="number" id="sig-page-jump" min="1" value="1" placeholder="页码">
+                <span data-i18n="sig.page_jump_suffix">页</span>
+              </label>
+              <button type="button" class="btn btn-outline btn-sm" id="sig-page-go" data-i18n="sig.page_go">跳转</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="page-panel hidden" id="rule-userdef">
+        <div class="panel">
+          <h2 data-i18n="nav.userdef">自定义规则</h2>
+          <p data-i18n="page.rule-userdef">lua脚本配置信息</p>
+        </div>
+      </section>
+      <section class="page-panel hidden" id="http-log">
+        <div class="panel container-log">
+          <h2 data-i18n="log.title">HTTP 日志</h2>
+          <div class="log-filter-grid">
+            <label>
+              <span data-i18n="log.filter_source_ip">源 IP</span>
+              <input id="filter-source-ip" type="text" data-i18n-placeholder="log.filter_source_ip_placeholder" placeholder="请输入来源 IP" />
+            </label>
+            <label>
+              <span data-i18n="log.filter_log_id">日志 ID</span>
+              <input id="filter-log-id" type="text" data-i18n-placeholder="log.filter_log_id_placeholder" placeholder="请输入日志 ID" />
+            </label>
+            <label>
+              <span data-i18n="log.filter_path">请求路径</span>
+              <input id="filter-path" type="text" data-i18n-placeholder="log.filter_path_placeholder" placeholder="请输入请求路径" />
+            </label>
+            <label>
+              <span data-i18n="log.filter_province">请求省份</span>
+              <input id="filter-province" type="text" data-i18n-placeholder="log.filter_province_placeholder" placeholder="请输入省份" />
+            </label>
+            <label>
+              <span data-i18n="log.filter_start_time">请求开始时间</span>
+              <input id="filter-start-time" type="datetime-local" />
+            </label>
+            <label>
+              <span data-i18n="log.filter_end_time">请求结束时间</span>
+              <input id="filter-end-time" type="datetime-local" />
+            </label>
+            <div class="filter-actions">
+              <button type="button" class="btn btn-outline" id="refresh-log" data-i18n="log.refresh">刷新</button>
+              <button type="button" class="btn btn-outline" id="clear-log" data-i18n="log.clear">清空</button>
+              <button type="button" class="btn btn-primary" id="filter-log" data-i18n="log.filter_btn">筛选</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th class="col-logid" data-i18n="log.col_log_id">日志 ID</th>
+                  <th class="col-srcip" data-i18n="log.col_src_ip">来源 IP</th>
+                  <th class="col-geo" data-i18n="log.col_geo">IP 来源</th>
+                  <th class="col-path" data-i18n="log.col_path">请求路径</th>
+                  <th class="col-method" data-i18n="log.col_method">请求方法</th>
+                  <th class="col-params" data-i18n="log.col_params">参数</th>
+                  <th class="col-time" data-i18n="log.col_time">请求时间</th>
+                  <th class="col-status" data-i18n="log.col_status">请求状态</th>
+                  <th class="col-action" data-i18n="log.col_action">操作</th>
+                </tr>
+              </thead>
+              <tbody id="log-table-body"></tbody>
+            </table>
+          </div>
+          <div class="log-pagination">
+            <div class="log-pagination-left">
+              <label><span data-i18n="log.page_size_label">每页</span>
+                <select id="log-page-size">
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <span data-i18n="log.page_size_suffix">条</span>
+              </label>
+            </div>
+            <div class="log-pagination-center">
+              <button type="button" class="pagination-btn" id="log-page-first" data-i18n-title="log.page_first" title="首页">«</button>
+              <button type="button" class="pagination-btn" id="log-page-prev" data-i18n-title="log.page_prev" title="上一页">‹</button>
+              <span class="pagination-info" id="log-page-info">第 1/1 页（共 0 条）</span>
+              <button type="button" class="pagination-btn" id="log-page-next" data-i18n-title="log.page_next" title="下一页">›</button>
+              <button type="button" class="pagination-btn" id="log-page-last" data-i18n-title="log.page_last" title="末页">»</button>
+            </div>
+            <div class="log-pagination-right">
+              <label><span data-i18n="log.page_jump_to">跳至</span>
+                <input type="number" id="log-page-jump" min="1" value="1" placeholder="页码">
+                <span data-i18n="log.page_jump_suffix">页</span>
+              </label>
+              <button type="button" class="btn btn-outline btn-sm" id="log-page-go" data-i18n="log.page_go">跳转</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-panel hidden" id="system-params">
+        <div class="panel">
+          <h2 data-i18n="sys.title">系统参数配置</h2>
+          <p class="panel-desc" data-i18n="sys.desc">管理 WAF 全局开关、特征库匹配规则与客户端真实 IP 透传配置。</p>
+
+          <div class="sys-config-grid">
+            <!-- Global rules -->
+            <div class="sys-config-card" data-config-card="global_config">
+              <div class="sys-card-icon sys-card-icon--shield">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="sys.global_rules">全局规则</h3>
+                    <span class="sys-status-badge" data-status-for="global_config">—</span>
+                  </div>
+                  <p data-i18n="sys.global_rules_desc">控制 WAF 整体防护策略的启用与关闭，关闭后所有流量将直接放行。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="global-config" value="1"><span class="radio-label-text" data-i18n="sys.enabled">开启</span></label>
+                    <label class="radio-label"><input type="radio" name="global-config" value="0"><span class="radio-label-text" data-i18n="sys.disabled">关闭</span></label>
+                  </div>
+                  <button type="button" class="btn btn-primary" data-action="save-global-config" data-save-btn data-i18n="common.save">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Signature matching -->
+            <div class="sys-config-card" data-config-card="policystatus">
+              <div class="sys-card-icon sys-card-icon--fingerprint">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="sys.policy_match">特征库匹配</h3>
+                    <span class="sys-status-badge" data-status-for="policystatus">—</span>
+                  </div>
+                  <p data-i18n="sys.policy_match_desc">启用或关闭 SQL 注入、XSS 攻击等特征库规则匹配，关闭后仅依赖 IP/路径/请求头等策略。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="policy-status" value="1"><span class="radio-label-text" data-i18n="sys.enabled">开启</span></label>
+                    <label class="radio-label"><input type="radio" name="policy-status" value="0"><span class="radio-label-text" data-i18n="sys.disabled">关闭</span></label>
+                  </div>
+                  <button type="button" class="btn btn-primary" data-action="save-policy-status" data-save-btn data-i18n="common.save">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Full logging -->
+            <div class="sys-config-card" data-config-card="full_log">
+              <div class="sys-card-icon sys-card-icon--log">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="sys.full_log">全量日志</h3>
+                    <span class="sys-status-badge" data-status-for="full_log">—</span>
+                  </div>
+                  <p data-i18n="sys.full_log_desc">开启后记录所有请求日志，关闭后仅记录触发拦截规则的请求日志，可减少日志存储量。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="full-log" value="1"><span class="radio-label-text" data-i18n="sys.enabled">开启</span></label>
+                    <label class="radio-label"><input type="radio" name="full-log" value="0"><span class="radio-label-text" data-i18n="sys.disabled">关闭</span></label>
+                  </div>
+                  <button type="button" class="btn btn-primary" data-action="save-full-log" data-save-btn data-i18n="common.save">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Login expiry -->
+            <div class="sys-config-card" data-config-card="active_time">
+              <div class="sys-card-icon sys-card-icon--time">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="sys.login_expiry">登录有效期</h3>
+                    <span class="sys-status-badge" data-status-for="active_time">—</span>
+                  </div>
+                  <p data-i18n="sys.login_expiry_desc">设置登录会话 Token 的有效期限。到期后需重新登录，选择"永不过期"则 Token 持续有效直至手动退出。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <select id="active-time-select" class="sys-select">
+                    <option value="3600" data-i18n="sys.select_1h">1小时</option>
+                    <option value="21600" data-i18n="sys.select_6h">6小时</option>
+                    <option value="43200" data-i18n="sys.select_12h">12小时</option>
+                    <option value="86400" data-i18n="sys.select_24h">24小时</option>
+                    <option value="0" data-i18n="sys.select_24h_default">24小时（默认）</option>
+                    <option value="604800" data-i18n="sys.select_7d">7天</option>
+                    <option value="2592000" data-i18n="sys.select_30d">30天</option>
+                    <option value="-1" data-i18n="sys.select_never">永不过期</option>
+                  </select>
+                  <button type="button" class="btn btn-primary" data-action="save-active-time" data-save-btn data-i18n="common.save">保存</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Real IP config -->
+            <div class="sys-config-card" data-config-card="realIpHeader">
+              <div class="sys-card-icon sys-card-icon--server">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="sys.real_ip">真实 IP 配置</h3>
+                    <span class="sys-status-badge" data-status-for="realIpHeader">—</span>
+                  </div>
+                  <p data-i18n="sys.real_ip_desc">设置从反向代理或 CDN 获取客户端真实 IP 的请求头字段，如 X-Forwarded-For 或 X-Real-IP。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <div class="sys-ip-input-wrap">
+                    <input type="text" id="real-ip-header" class="sys-ip-input" data-i18n-placeholder="sys.real_ip_placeholder" placeholder="例如：X-Forwarded-For">
+                    <button type="button" class="btn btn-primary" data-action="save-real-ip" data-save-btn data-i18n="common.save">保存</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Language switcher -->
+            <div class="sys-config-card" data-config-card="language_switch">
+              <div class="sys-card-icon sys-card-icon--language">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </div>
+              <div class="sys-card-body">
+                <div class="sys-card-header">
+                  <div class="sys-card-title-row">
+                    <h3 data-i18n="lang.switch_label">界面语言</h3>
+                  </div>
+                  <p data-i18n="lang.switch_desc">切换界面显示语言，选择后即时生效。</p>
+                </div>
+                <div class="sys-card-controls">
+                  <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="app-locale" value="zh" checked><span class="radio-label-text" data-i18n="lang.zh">中文</span></label>
+                    <label class="radio-label"><input type="radio" name="app-locale" value="en"><span class="radio-label-text" data-i18n="lang.en">English</span></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="add-selector-modal" role="dialog" aria-modal="true"
+    aria-labelledby="add-selector-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+      <h2 id="add-selector-title" data-i18n="region.add_title">选择添加类型</h2>
+      <div class="modal-body region-add-body">
+        <div class="region-add-options">
+          <label><input type="radio" name="region-type" value="province" checked> <span data-i18n="region.add_province">省份</span></label>
+          <label><input type="radio" name="region-type" value="country"> <span data-i18n="region.add_country">国家</span></label>
+          <label><input type="radio" name="region-type" value="continent"> <span data-i18n="region.add_continent">大陆</span></label>
+        </div>
+        <div class="region-add-info">
+          <div class="info-row"><span class="label" data-i18n="region.add_ip">IP</span><span id="region-info-ip">-</span></div>
+          <div class="info-row"><span class="label" data-i18n="region.add_province">省份</span><span id="region-info-region">-</span></div>
+          <div class="info-row"><span class="label" data-i18n="region.add_country">国家</span><span id="region-info-country">-</span></div>
+          <div class="info-row"><span class="label" data-i18n="region.add_continent">大陆</span><span id="region-info-continent">-</span></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="region-add-cancel" data-i18n="region.add_cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="region-add-confirm" data-i18n="region.add_confirm">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Request params modal -->
+  <div class="modal hidden" id="log-param-modal" role="dialog" aria-modal="true"
+    aria-labelledby="log-param-modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+      <h2 id="log-param-modal-title" data-i18n="log.param_title">请求参数</h2>
+      <pre id="log-param-content"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="log-param-close" data-i18n="log.param_close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Request detail drawer -->
+  <div class="drawer-overlay hidden" id="log-drawer-overlay">
+    <div class="drawer-backdrop"></div>
+    <aside class="drawer-panel" id="log-drawer" role="dialog" aria-modal="true"
+      aria-labelledby="log-drawer-title">
+      <div class="drawer-header">
+        <h2 id="log-drawer-title" data-i18n="log.drawer_title">请求详情</h2>
+        <button type="button" class="drawer-close-btn" id="log-drawer-close" data-i18n-title="common.close" title="关闭">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <pre id="log-drawer-content"></pre>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Signature DB: content view modal -->
+  <div class="modal hidden" id="sig-content-modal" role="dialog" aria-modal="true"
+    aria-labelledby="sig-content-modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+      <h2 id="sig-content-modal-title" data-i18n="sig.content_title">规则内容</h2>
+      <pre id="sig-content-body"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="sig-content-close" data-i18n="sig.content_close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature DB: add rule modal -->
+  <div class="modal hidden" id="sig-add-modal" role="dialog" aria-modal="true"
+    aria-labelledby="sig-add-modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel sig-add-panel">
+      <h2 id="sig-add-modal-title" data-i18n="sig.add_title">新增规则</h2>
+      <div class="modal-body sig-add-body">
+        <label class="sig-add-field"><span data-i18n="sig.add_scope">生效位置</span>
+          <select id="sig-add-category">
+            <option value="uri" selected data-i18n="sig.add_scope_uri">请求路径</option>
+            <option value="param" data-i18n="sig.add_scope_param">参数值</option>
+            <option value="header" data-i18n="sig.add_scope_header">请求头的值</option>
+          </select>
+        </label>
+        <label class="sig-add-field"><span data-i18n="sig.add_name">规则名称</span>
+          <input id="sig-add-name" type="text" data-i18n-placeholder="sig.add_name_placeholder" placeholder="明文输入，保存时自动 Base64 编码" />
+        </label>
+        <label class="sig-add-field"><span data-i18n="sig.add_desc">规则描述</span>
+          <input id="sig-add-desc" type="text" data-i18n-placeholder="sig.add_desc_placeholder" placeholder="明文输入，保存时自动 Base64 编码" />
+        </label>
+        <label class="sig-add-field"><span data-i18n="sig.add_content">规则内容</span>
+          <span class="sig-add-hint" data-i18n="sig.add_content_hint">指定位置包含此内容即命中，多条内容需全部出现（AND）</span>
+        </label>
+        <div class="sig-add-content-row">
+          <input id="sig-add-content-input" type="text" data-i18n-placeholder="sig.add_content_input_placeholder" placeholder="输入匹配内容后点击添加" />
+          <button type="button" class="btn btn-outline" id="sig-add-content-add" data-i18n="sig.add_content_add">添加</button>
+        </div>
+        <div class="sig-add-content-tags" id="sig-add-content-tags"></div>
+        <label class="sig-add-field"><span data-i18n="sig.add_score">风险等级</span>
+          <select id="sig-add-score">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </label>
+        <label class="sig-add-field"><span data-i18n="sig.add_status">规则状态</span>
+          <select id="sig-add-status">
+            <option value="0" selected data-i18n="sig.add_status_intercept">拦截</option>
+            <option value="2" data-i18n="sig.add_status_alert">告警</option>
+            <option value="1" data-i18n="sig.add_status_inactive">不生效</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="sig-add-cancel" data-i18n="sig.add_cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="sig-add-confirm" data-i18n="sig.add_confirm">确认新增</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout confirm modal -->
+  <div class="modal hidden" id="logout-modal" role="dialog" aria-modal="true"
+    aria-labelledby="logout-modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+      <h2 id="logout-modal-title" data-i18n="confirm.logout_title">确认退出</h2>
+      <div class="modal-body">
+        <p style="margin:0;font-size:0.95rem;color:#475569;" data-i18n="confirm.logout_text">退出登录后需要重新输入账号密码进行认证，确定要退出吗？</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="logout-cancel" data-i18n="common.cancel">取消</button>
+        <button type="button" class="btn btn-danger" id="logout-confirm" data-i18n="confirm.logout_confirm">确认退出</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/lib/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
