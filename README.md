@@ -40,9 +40,7 @@ http {
         log_by_lua_file    /usr/local/acccontrol/luafiles/done_request.lua;
 
         location / {
-            default_type application/json;
-            content_by_lua_file /usr/local/acccontrol/luafiles/test.lua;
-            # Or: proxy_pass http://backend;
+            # proxy_pass http://backend;
         }
     }
 }
