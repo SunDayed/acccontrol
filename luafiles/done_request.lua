@@ -136,26 +136,11 @@ do
 
         local client_ip = wmxh.get_ip()
 
-        -- Get IP geo info (read from region_list shared cache, cached in access phase)
+        -- Read IP geo info from region_list shared cache (populated by access phase lookup_ip_geo)
+        -- Note: cosocket (ngx.socket.tcp) is NOT available in log_by_lua phase
         local geo_region = region_list:get(client_ip .. "_region_name")
         local geo_country = region_list:get(client_ip .. "_country_name")
         local geo_continent = region_list:get(client_ip .. "_continent_code")
-
-        -- On cache miss, actively query and write to shared cache
-        if not geo_region and not geo_country and not geo_continent then
-            local ok, result = pcall(wmxh.local_get_Region, client_ip)
-            if ok and result and result ~= "" then
-                local ok_decode, geo_data = pcall(cjson.decode, result)
-                if ok_decode and geo_data then
-                    geo_region = geo_data.region_name or ""
-                    geo_country = geo_data.country_name or ""
-                    geo_continent = geo_data.continent_code or ""
-                    region_list:set(client_ip .. "_region_name", geo_region, 21600)
-                    region_list:set(client_ip .. "_country_name", geo_country, 21600)
-                    region_list:set(client_ip .. "_continent_code", geo_continent, 21600)
-                end
-            end
-        end
 
         -- Build log entry (consistent with old format)
         local log_entry = {
